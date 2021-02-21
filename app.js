@@ -1,6 +1,14 @@
 const express = require('express');
+
 const app = express();
+
+const path = require('path')
+
+app.set('views','./views')
+
 app.set("view engine", "ejs");
+
+app.use(express.static(__dirname+ '/public'));
 
 app.get('/',(req, res) => {
 	var usuario = {
@@ -9,6 +17,11 @@ app.get('/',(req, res) => {
 		"sexo": "Masculino"
 	}
 	res.render("home",{'user': usuario})
+
+})
+app.get('/login',function(req,res){
+
+	res.render("login")
 
 })
 
