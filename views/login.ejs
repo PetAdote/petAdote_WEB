@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link rel="stylesheet" href='css/css_login.css'>
+
+    <title>Hello, world!</title>
+    <%- include('partials/head') %>
+  </head>
+  <body>
+      
+    <%- include('partials/header') %>
+        <div class="container-fluid vh-100">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaEsquerda">  
+                    <div class="row h-100 d-flex align-content-center justify-content-center">
+                        <div class="col-7 h-50 ContainerLogin">
+                            <br>
+                            <br>
+                            <h1 class='text-center' style="color: greenyellow; margin-bottom: 20px ; font-size: 30px;"> Login : </h1>
+                            <div class= 'row d-flex align-content-center justify-content-center p-0 m-0'>
+                                <div class="col-3 p-0 m-0 d-flex align-content-center justify-content-center Label">
+                                <form action="" method="POST">   
+                                <label class="Label" for="Usuario_Email"> Usuário ou Email:</label>
+                                <br>
+                                <input class="input" type="text" id="Usuario_Email" name="useremail" placeholder="Digite aqui...">
+                                <br>
+                                <label class="Label" for="senha" style="margin-top:20px"> Senha: </label>
+                                <br>
+                                <input type="text" id="senha" name="senha" placeholder="Digite aqui..." style="margin-bottom: 20px;">
+                                <br>
+                                <a class="EsqueceuASenha" href="">Esqueceu a Senha!</a> 
+                                <br>
+                                <input class="Input" type="submit" value="Logar" style="margin-top: 20px;">                                
+                                </form>
+                                </div>  
+                                             
+                            </div>
+                            <div class="row" >
+                            </div>
+                            <div class="row" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaDireita">
+                </div>             
+            </div>
+        </div>
+        <%- include('partials/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+  </body>
+</html>
