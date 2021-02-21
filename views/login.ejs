@@ -6,11 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    <link rel="stylesheet" href='css/css_login.css'>
-
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous"> -->
+    
     <title>Hello, world!</title>
+
     <%- include('partials/head') %>
+    <link rel="stylesheet" href='/public/css/css_login.css'>
+
   </head>
   <body>
       
@@ -19,32 +21,29 @@
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaEsquerda">  
                     <div class="row h-100 d-flex align-content-center justify-content-center">
-                        <div class="col-7 h-50 ContainerLogin">
-                            <br>
-                            <br>
-                            <h1 class='text-center' style="color: greenyellow; margin-bottom: 20px ; font-size: 30px;"> Login : </h1>
+                        <div class="col-7 h-50 d-flex justify-content-center align-content-center ContainerLogin">
+
                             <div class= 'row d-flex align-content-center justify-content-center p-0 m-0'>
                                 <div class="col-3 p-0 m-0 d-flex align-content-center justify-content-center Label">
-                                <form action="" method="POST">   
-                                <label class="Label" for="Usuario_Email"> Usuário ou Email:</label>
-                                <br>
-                                <input class="input" type="text" id="Usuario_Email" name="useremail" placeholder="Digite aqui...">
-                                <br>
-                                <label class="Label" for="senha" style="margin-top:20px"> Senha: </label>
-                                <br>
-                                <input type="text" id="senha" name="senha" placeholder="Digite aqui..." style="margin-bottom: 20px;">
-                                <br>
-                                <a class="EsqueceuASenha" href="">Esqueceu a Senha!</a> 
-                                <br>
-                                <input class="Input" type="submit" value="Logar" style="margin-top: 20px;">                                
-                                </form>
-                                </div>  
-                                             
+                                    <form class="p-0 m-0 Label" action="" method="POST">   
+                                        <h1 class='text-center' style="color: greenyellow; margin-bottom: 20px ; font-size: 30px;"> Login </h1>
+                                        <label class="Label" for="Usuario_Email"> Usuário ou Email:</label>
+                                        <br>
+                                        <input class="input" type="text" id="Usuario_Email" name="useremail" placeholder="Digite aqui...">
+                                        <br>
+                                        <label class="Label" for="senha" style="margin-top:20px"> Senha: </label>
+                                        <br>
+                                        <input type="text" id="senha" name="senha" placeholder="Digite aqui..." style="margin-bottom: 20px;">
+                                        <br>
+                                        <input class="Input" type="submit" value="Logar" style="width:75%; margin-top: 20px;">
+                                        <br>
+                                        <a class="EsqueceuASenha" href="">Esqueceu a Senha!</a> 
+                                        <br>
+                                        <!-- <input class="Input" type="submit" value="Logar" style="margin-top: 20px;"> -->
+                                    </form>
+                                </div>        
                             </div>
-                            <div class="row" >
-                            </div>
-                            <div class="row" >
-                            </div>
+                            
                         </div>
                     </div>
                 </div>

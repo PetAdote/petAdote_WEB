@@ -6,7 +6,7 @@
 }
 .ColunaDireita{
 
-    background-image: url('https://images.pexels.com/photos/4734723/pexels-photo-4734723.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
+    background-image: url('/public/images/bgLogin_blocoDireita.jpeg');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -40,8 +40,10 @@ color: white;
 }
 .Label{
 
-color: white;
+/*color: white;*/
+color: greenyellow;
 font-size: 20px;
-justify-content: center;
+/*justify-content: center;*/
+text-align: center;
 
 }
