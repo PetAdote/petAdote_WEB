@@ -4,11 +4,9 @@ const app = express();
 
 const path = require('path')
 
-app.set('views','./views')
-
 app.set("view engine", "ejs");
 
-app.use(express.static(__dirname+ '/public'));
+app.use('/public', express.static(path.join(__dirname, "public")));
 
 app.get('/',(req, res) => {
 	var usuario = {
@@ -24,6 +22,22 @@ app.get('/login',function(req,res){
 	res.render("login")
 
 })
+app.get('/cadastro1', function(req,res){
+
+	res.render('cadastro1')
+
+})
+app.get('/cadastro2', function(req,res){
+
+	res.render('cadastro2')
+
+})
+app.get('/cadastro3', function(req,res){
+
+	res.render('cadastro3')
+
+})
+
 
 app.listen(8081,function(){
 

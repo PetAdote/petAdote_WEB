@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">   
+
+    <title>PetAdote-Cadastro</title>
+    <%- include('partials/head') %>
+
+     <link rel="stylesheet" href='/public/css/css_cadastro3.css'>
+  </head>
+  <body>
+      
+    <%- include('partials/header') %>
+        <div class="container-fluid vh-100">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaEsquerda">  
+                    <div class="row h-100 d-flex align-content-center justify-content-center">
+                        <div class="col-9 h-90 ColunaCadastro">
+                            <div class= 'row d-flex align-content-center justify-content-center p-0 m-0'>
+                                <div class="col-3 p-0 m-0 d-flex align-content-center justify-content-center Forms">
+                                    <form id="cadastro_1" action="/views/home.ejs" method="POST">
+                                        <p style="margin-top: 20px; font-size: 35px;"> Cadastro 3/3 :</p>
+                                        <label class="Label" for="estado"> Estado:</label>
+                                        <br>
+                                        <input class="Input" type="text" id="estado" name="estado" placeholder="Digite aqui...">
+                                        <br>
+                                        <label class="Label" for="cidade"> Cidade: </label>
+                                        <br>
+                                        <input class="Input" type="text" id="cidade" name="cidade" placeholder="Digite aqui...">
+                                        <br>
+                                        <label class="Label" for="bairro"> Bairro:</label>
+                                        <br>
+                                        <input class="Input" type="text" id="bairro" name="bairro" placeholder="Digite aqui...">
+                                        <br>
+                                        <label class="Label" for="lougradouro" style=> Lougradouro: </label>
+                                        <br>
+                                        <input class="Input" type="text" id="lougradouro" name="lougradouro" placeholder="Digite aqui...">
+                                        <br>
+                                        <label class="Label" for="numero" style=> Número: </label>
+                                        <br>
+                                        <input class="Input" type="number" id="numero" name="numero" placeholder="Digite aqui...">
+                                        <br>
+                                        <label class="Label" for="complemento" > Complemento (opcional): </label>
+                                        <br>
+                                        <input class="Input" type="text" id="complemento" name="complemento" placeholder="Digite aqui...">
+                                        <br>
+                                        <label class="Label" for="cep"> CEP: </label>
+                                        <br>
+                                        <input class="Input" type="number" id="data_nas" name="data_nas" placeholder="Digite aqui...">
+                                        <br>
+                                        <div class="row-fluid">
+                                        <input class="Botao" type=button type="submit" value="Concluir" style="margin-top: 20px;">  </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaDireita">
+                </div>             
+            </div>
+        </div>
+        <%- include('partials/footer') %>
+  </body>
+  </html>
