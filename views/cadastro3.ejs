@@ -11,7 +11,7 @@
     <title>PetAdote-Cadastro</title>
     <%- include('partials/head') %>
 
-     <link rel="stylesheet" href='/public/css/css_cadastro.css'>
+     <link rel="stylesheet" href='/public/css/css_cadastro3.css'>
   </head>
   <body>
       
@@ -20,41 +20,41 @@
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaEsquerda">  
                     <div class="row h-100 d-flex align-content-center justify-content-center">
-                        <div class="col-9 ColunaCadastro">
+                        <div class="col-9 h-90 ColunaCadastro">
                             <div class= 'row d-flex align-content-center justify-content-center p-0 m-0'>
                                 <div class="col-3 p-0 m-0 d-flex align-content-center justify-content-center Forms">
                                     <form id="cadastro_1" action="/views/home.ejs" method="POST">
-                                        <h1 style="margin-top: 20px;"> Cadastro:</h1>
-                                        <label class="Label" for="nome"> Nome:</label>
+                                        <p style="margin-top: 20px; font-size: 35px;"> Cadastro 3/3 :</p>
+                                        <label class="Label" for="estado"> Estado:</label>
                                         <br>
-                                        <input class="Input" type="text" id="nome" name="nome" placeholder="Digite aqui...">
+                                        <input class="Input" type="text" id="estado" name="estado" placeholder="Digite aqui...">
                                         <br>
-                                        <label class="Label" for="sobrenome"> Sobrenome: </label>
+                                        <label class="Label" for="cidade"> Cidade: </label>
                                         <br>
-                                        <input class="Input" type="text" id="sobrenome" name="sobrenome" placeholder="Digite aqui...">
+                                        <input class="Input" type="text" id="cidade" name="cidade" placeholder="Digite aqui...">
                                         <br>
-                                        <label class="Label" for="Usuario_Email"> Email:</label>
+                                        <label class="Label" for="bairro"> Bairro:</label>
                                         <br>
-                                        <input class="Input" type="text" id="Usuario_Email" name="useremail" placeholder="Digite aqui...">
+                                        <input class="Input" type="text" id="bairro" name="bairro" placeholder="Digite aqui...">
                                         <br>
-                                        <label class="Label" for="Usuario_Email_conf" style=> Confirmar Email: </label>
+                                        <label class="Label" for="lougradouro" style=> Lougradouro: </label>
                                         <br>
-                                        <input class="Input" type="text" id="Usuario_Email_conf" name="Usuario_Email_conf" placeholder="Digite aqui...">
+                                        <input class="Input" type="text" id="lougradouro" name="lougradouro" placeholder="Digite aqui...">
                                         <br>
-                                        <label class="Label" for="senha" style=> Senha: </label>
+                                        <label class="Label" for="numero" style=> Número: </label>
                                         <br>
-                                        <input class="Input" type="password" id="senha" name="senha" placeholder="Digite aqui...">
+                                        <input class="Input" type="number" id="numero" name="numero" placeholder="Digite aqui...">
                                         <br>
-                                        <label class="Label" for="senha_conf" > Confirmar Senha: </label>
+                                        <label class="Label" for="complemento" > Complemento (opcional): </label>
                                         <br>
-                                        <input class="Input" type="password" id="senha_conf" name="senha" placeholder="Digite aqui...">
+                                        <input class="Input" type="text" id="complemento" name="complemento" placeholder="Digite aqui...">
                                         <br>
-                                        <label class="Label" for="data_nas"> Data de nascimento: </label>
+                                        <label class="Label" for="cep"> CEP: </label>
                                         <br>
-                                        <input class="Input" type="date" id="data_nas" name="data_nas" placeholder="Digite aqui...">
+                                        <input class="Input" type="number" id="data_nas" name="data_nas" placeholder="Digite aqui...">
                                         <br>
-                                        <div class="row w-15">
-                                        <input class="Botao" type=button type="submit" value="Proximo ->" style="margin-top: 20px;">  </button>
+                                        <div class="row-fluid">
+                                        <input class="Botao" type=button type="submit" value="Concluir" style="margin-top: 20px;">  </button>
                                         </div>
                                     </form>
                                 </div>

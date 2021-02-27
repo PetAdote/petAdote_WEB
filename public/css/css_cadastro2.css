@@ -1,6 +1,6 @@
 .ColunaDireita{
 
-    background-image: url('/public/images/nescau_benetti.png');
+    background-image: url('/public/images/lili_bia.png');
     background-color: violet;
     background-repeat: no-repeat;
     background-size: cover;
@@ -10,7 +10,7 @@
 }
 .ColunaEsquerda{
 
-    background-image: url('/public/images/gato_sophia.png');
+    background-image: url('/public/images/gatinha_caio.png');
     background-color: rgb(130, 238, 220);
     background-repeat: no-repeat;
     background-size: cover;
@@ -42,7 +42,7 @@
 .Label{
 
     color: greenyellow;
-    font-size: 20px;
+    font-size: 25x;
     justify-content: center;
 
 
@@ -50,7 +50,6 @@
 .Input{
 
     font-size: 20px;
-    
 
 
 }

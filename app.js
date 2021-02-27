@@ -22,11 +22,22 @@ app.get('/login',function(req,res){
 	res.render("login")
 
 })
-app.get('/cadastro', function(req,res){
+app.get('/cadastro1', function(req,res){
 
-	res.render('cadastro')
+	res.render('cadastro1')
 
 })
+app.get('/cadastro2', function(req,res){
+
+	res.render('cadastro2')
+
+})
+app.get('/cadastro3', function(req,res){
+
+	res.render('cadastro3')
+
+})
+
 
 app.listen(8081,function(){
 
