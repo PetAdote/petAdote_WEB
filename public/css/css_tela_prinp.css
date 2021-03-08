@@ -1,0 +1,51 @@
+.MenuDaEsquerda{
+
+    background-image: url("/public/images/mia_matues.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: rgb(255, 255, 255);
+    border: rgb(61, 59, 59) solid 3px;
+    justify-content: center;
+    font-size: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    overflow: auto;
+
+}
+.Trespontos{
+
+    width: 45px;
+    height: 45px;
+    margin: 10px;
+    margin-top: 20px;
+}
+.Texto{
+
+    margin-left: 10px;
+    padding: 5px;
+
+
+}
+.PontoAmarelo{
+
+    width: 25px;
+    height: 25px;
+
+}
+.Linha{
+
+   position: absolute; top: 305px;
+}
+.Fundo{
+
+    background-image: url(/public/images/melissa_caio.png);
+
+}
+.MenuDaDireita{
+
+    background-image: url(/public/images/osiris3_arthur.png);
+    background-repeat: no-repeat;
+    background-size: 1600px 950px
+   
+}
+
