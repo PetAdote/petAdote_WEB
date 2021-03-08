@@ -37,6 +37,16 @@ app.get('/cadastro3', function(req,res){
 	res.render('cadastro3')
 
 })
+app.get('/tela_principal', function(req,res){
+
+	res.render('tela_principal')
+
+})
+app.get('/tela_principal2', function(req,res){
+
+	res.render('tela_principal2')
+
+})
 
 
 app.listen(8081,function(){
