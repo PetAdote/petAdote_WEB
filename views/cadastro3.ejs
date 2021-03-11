@@ -18,11 +18,11 @@
     <%- include('partials/header') %>
         <div class="container-fluid vh-100">
             <div class="row">
-                <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaEsquerda">  
+                <div class="col-lg-6 col-md-6 col-sm-6 vh-100 ColunaEsquerda">  
                     <div class="row h-100 d-flex align-content-center justify-content-center">
-                        <div class="col-9 h-90 ColunaCadastro">
+                        <div class="col-lg-6 col-sm-10 col-md-8 h-90 ColunaCadastro">
                             <div class= 'row d-flex align-content-center justify-content-center p-0 m-0'>
-                                <div class="col-3 p-0 m-0 d-flex align-content-center justify-content-center Forms">
+                                <div class="col-lg-12 col-sm-8 col-md-8 d-flex Forms">
                                     <form id="cadastro_1" action="/views/home.ejs" method="POST">
                                         <p style="margin-top: 20px; font-size: 35px;"> Cadastro 3/3 :</p>
                                         <label class="Label" for="estado"> Estado:</label>
@@ -62,10 +62,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaDireita">
+                <div class="col-lg-6 col-md-6 col-sm-6 vh-100 ColunaDireita">
                 </div>             
             </div>
+            <footer class = "footer">
+                <div class = "row">
+                    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                        © 2020 Copyright: PetAdote
+                      </div>
+                </div>
+        </footer>
         </div>
-        <%- include('partials/footer') %>
+ 
   </body>
   </html>
