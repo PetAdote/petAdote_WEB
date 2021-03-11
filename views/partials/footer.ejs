@@ -190,8 +190,9 @@
 				})
 
 				// console.log(accessTokenAPI);
-				// Veja o token de acesso recebido.
+				// Veja o token de acesso da API recebido.
 
+				let cod_usuario = undefined;
 				let accessTokenUser = undefined;
 
 				if (accessTokenAPI){
@@ -210,6 +211,7 @@
 					.then((result) => {
 						console.log('ResultCadastro: ', result);
 						// 'result' é uma Mensagem (De sucesso ou descrevendo o motivo da falha) e o Token de Acesso do Usuário nesse Cliente.
+						cod_usuario = result.cod_usuario;
 						return accessTokenUser = result.tokenUsuario;
 					})
 				}
@@ -217,7 +219,7 @@
 				if (accessTokenUser){
 
 					if (userAvatar.entries().next().value !== undefined){
-						await fetch(restAddress + 'usuarios/6', {			// Atenção, o ID do usuário deve ser decodificado do JWT.
+						await fetch(restAddress + `usuarios/${cod_usuario}`, {			// Atenção, o ID do usuário deve ser decodificado do JWT.
 							method: 'PATCH',
 							headers: new Headers({
 								'Authorization': `Bearer ${accessTokenUser}`
@@ -233,7 +235,7 @@
 					}
 
 					if (userBanner.entries().next().value !== undefined){
-						await fetch(restAddress + 'usuarios/6', {			// Atenção, o ID do usuário deve ser decodificado do JWT.
+						await fetch(restAddress + `usuarios/${cod_usuario}`, {			// Atenção, o ID do usuário deve ser decodificado do JWT.
 							method: 'PATCH',
 							headers: new Headers({
 								'Authorization': `Bearer ${accessTokenUser}`
@@ -244,7 +246,7 @@
 							return response.json();
 						})
 						.then((result) => {
-							console.log('ResultAdiçãoDoAvatar', result);
+							console.log('ResultAdiçãoDoBanner', result);
 						})
 					}
 
