@@ -38,7 +38,7 @@
 }
 
 
-.MenuDaDireita{
+.TelaDaDireita{
 
     background-image: url(/public/images/osiris3_arthur.png);
     background-repeat: no-repeat;
@@ -51,16 +51,59 @@
     margin-left: 160px;
     margin-top: 30px;
     height: 50px;
-    border: rgb(61, 59, 59) solid 3px;
+    border: rgb(61, 59, 59) solid 2px;
 
 }
 .Post{
 
     background-color: rgb(255, 255, 255);
-    margin-left: 153px;
+    margin-left: 160px;
     height: 300px;
     border: rgb(61, 59, 59) solid 3px;
     margin-bottom: 60px;
     
 
+}
+.PostEsp{
+
+    background-color: rgb(255, 255, 255);
+    margin-left: 170px;
+    height: 300px;
+    border: rgb(61, 59, 59) solid 3px;
+    margin-bottom: 60px;
+    
+
+}
+.PostsHeaderEsp{
+
+    background-color: chocolate;
+    margin-left: 170px;
+    margin-top: 30px;
+    height: 50px;
+    border: rgb(61, 59, 59) solid 2px;
+
+}
+.Icones{
+
+    width: 45px;
+    height: 35px;
+    margin-left: 30px
+    
+
+}
+.Genero{
+
+    width: 35px;
+    height: 35px;
+    margin-left: 30px
+    
+
+}
+.Trespontos2{
+
+    width: 25px;
+    height: 30px;
+    float: right;
+    margin-top: 4px ;
+   
 }
