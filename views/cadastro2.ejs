@@ -19,10 +19,10 @@
         <div class="container-fluid vh-100">
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaEsquerda">  
-                    <div class="row h-100 d-flex align-content-center justify-content-center">
-                        <div class="col-10 ColunaCadastro">
-                            <div class= 'row d-flex align-content-center justify-content-center p-0 m-0'>
-                                <div class="col-9 p-0 m-0 d-flex align-content-center justify-content-center Forms">
+                    <div class="row h-100  align-content-center justify-content-center">
+                        <div class="col-lg-10 col-xl-9 col-md-9 col-sm-10 vh-80 ColunaCadastro">
+                            <div class= 'row d-flex align-content-center justify-content-center'>
+                                <div class="col-lg-12 col-sm-10 d-flex align-content-center justify-content-center Forms">
                                     <form id="cadastro_1" action="/views/home.ejs" method="POST">
                                         <p style="margin-top: 20px; font-size: 35px;"> Cadastro 2/3:</p>
                                         <label class="Label" for="foto"  style="margin-top:20px"> Foto (opcional):</label>
@@ -49,7 +49,14 @@
                 <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaDireita">
                 </div>             
             </div>
+            <footer class = "footer">
+                <div class = "row">
+                    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                        © 2020 Copyright: PetAdote
+                      </div>
+                </div>
+        </footer>
         </div>
-        <%- include('partials/footer') %>
+
   </body>
   </html>

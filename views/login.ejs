@@ -8,7 +8,7 @@
     <!-- Bootstrap CSS -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous"> -->
     
-    <title>Hello, world!</title>
+    <title>PetAdote - Login</title>
 
     <%- include('partials/head') %>
     <link rel="stylesheet" href='/public/css/css_login.css'>
@@ -19,14 +19,14 @@
     <%- include('partials/header') %>
         <div class="container-fluid vh-100">
             <div class="row">
-                <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaEsquerda">  
+                <div class="col-lg-5 col-md-12 col-sm-12 vh-100 ColunaEsquerda">  
                     <div class="row h-100 d-flex align-content-center justify-content-center">
                         <div class="col-7 h-50 d-flex justify-content-center align-content-center ContainerLogin">
 
                             <div class= 'row d-flex align-content-center justify-content-center p-0 m-0'>
                                 <div class="col-3 p-0 m-0 d-flex align-content-center justify-content-center Label">
                                     <form class="p-0 m-0 Label" action="" method="POST">   
-                                        <h1 class='text-center' style="color: greenyellow; margin-bottom: 20px ; font-size: 30px;"> Login </h1>
+                                        <h1 class='text-center' style="color: greenyellow; margin-bottom: 20px ; font-size: 30px;"> Login: </h1>
                                         <label class="Label" for="Usuario_Email"> Usuário ou Email:</label>
                                         <br>
                                         <input class="input" type="text" id="Usuario_Email" name="useremail" placeholder="Digite aqui...">
@@ -47,11 +47,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-12 col-sm-12 vh-100 ColunaDireita">
+                <div class="col-lg-7 col-md-12 col-sm-12 vh-100 ColunaDireita">
                 </div>             
             </div>
+            <footer class = "footer">
+                    <div class = "row">
+                        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+                            © 2020 Copyright: PetAdote
+                          </div>
+                    </div>
+            </footer>
         </div>
-        <%- include('partials/footer') %>
+       
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
   </body>

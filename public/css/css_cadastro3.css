@@ -30,6 +30,8 @@
     min-height: 90%;
     height: 90%;
     overflow: auto;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
 
 }
 .Forms{
@@ -38,6 +40,8 @@
     font-size: 30px;
     justify-content: center;
     opacity: 100%;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
     
     }
 .Label{
@@ -45,13 +49,16 @@
     color: greenyellow;
     font-size: 20px;
     justify-content: center;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    align-content: center;
 
 
 }
 .Input{
 
     font-size: 20px;
-    
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
 
 
 }
@@ -61,7 +68,8 @@
     background-color: yellowgreen;
     color: white;
     justify-content: center;
-   
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
 
 }
 p.ontop {
