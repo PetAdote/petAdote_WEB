@@ -1,12 +1,15 @@
 .ColunaEsquerda{
 
-    background-image: url('https://images.pexels.com/photos/2409490/pexels-photo-2409490.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260');
+    background-image: url('/public/images/jade4_mateus.png');
     background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
 
 }
 .ColunaDireita{
 
-    background-image: url('https://images.pexels.com/photos/4734723/pexels-photo-4734723.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500');
+    background-image: url('/public/images/bessi2_sophia.png');
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;

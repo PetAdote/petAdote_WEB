@@ -1,0 +1,196 @@
+.MenuDaEsquerda{
+
+    background-image: url("/public/images/mel_lucas.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: greenyellow;
+    border: rgb(61, 59, 59) solid 3px;
+    justify-content: center;
+    font-size: 30px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    overflow: auto;
+    text-shadow: 1px 1px 2px rgb(0, 0, 0);
+
+
+}
+
+.TelaDaDireita{
+
+    background-image: url(/public/images/fueta_mateus.png);
+    background-repeat: no-repeat;
+    background-size: 1600px 950px
+   
+}
+.Trespontos{
+
+    width: 35px;
+    height: 35px;
+}
+
+.PontoAmarelo{
+
+    width: 25px;
+    height: 25px;
+
+}
+.Linha{
+
+    position: absolute; top: 285px;
+}
+.PerfilHeader{
+
+    height: 500px;
+    background-image: url(/public/images/gatinha3_miriam.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position:center;
+    background-position-y: 30%;
+    border: solid black 2px;
+
+}
+.Bioedetalhes{
+
+    height: 180px;
+    background-color: rgb(167, 69, 154);
+    border: solid black 1px;
+    border-radius: 4px;
+    margin-left: 125px;
+   
+
+}
+.FotoPerfil{
+
+    height: 325px;
+    width: 300px;
+    border-radius: 50%;
+    margin-top: 20px;
+    margin-left: 20px;
+    border: solid rgb(146, 144, 144) 3px;
+    
+
+}
+.TextoPerfil{
+
+    color: greenyellow;
+    font-size: 50px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-shadow: 3px 3px 3px rgb(0, 0, 0);
+    margin-left: 30px;
+
+
+}
+.Texto{
+
+    margin-left: 10px;
+    padding: 5px;
+    text-shadow: 2px 2px 2px rgb(0, 0, 0);
+
+}
+.Editar{
+
+    background-color: yellowgreen; /* Green */
+  border: none;
+  color: rgb(255, 255, 255);
+  padding: 10px 60px;
+  text-align: center;
+  font-size: 25px;
+  margin-left: 200px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0);
+  border: solid rgb(102, 10, 90) 2px;
+  display: inline-block;
+ 
+}
+.Editar:active{
+
+    background-color:  rgb(179, 50, 205); /* Green */
+  border: none;
+  color: rgb(255, 255, 255);
+  padding: 10px 60px;
+  text-align: center;
+  font-size: 25px;
+  margin-left: 200px;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  text-shadow: 1px 1px 2px rgb(0, 0, 0);
+  border: solid rgb(102, 10, 90) 2px;
+  display: inline-block;
+ 
+}
+.TextoBio{
+
+    color: greenyellow;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-shadow: 1px 1px 2px rgb(0, 0, 0);
+    margin-left: 10px;
+    margin-top: 15px;
+
+}
+.LinhaVertical{
+    
+    margin-left: 50px;
+    width: 20px;
+    height: 100px;
+
+}
+.Botoes{
+
+    width: 500px;
+    background-color: yellowgreen;
+    border-radius: 5px;
+    text-align: center;
+    border: solid 1px black;
+    color: white;
+    text-shadow: 1px 1px 2px rgb(0, 0, 0);
+    padding-right: 10px;
+    margin-left: 250px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+
+
+}
+.Botoes:active{
+
+   
+    background-color: rgb(179, 50, 205);
+    border-radius: 5px;
+    text-align: center;
+    border: solid 1px black;
+    color: white;
+    text-shadow: 1px 1px 2px rgb(0, 0, 0);
+    margin-left: 250px;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+
+
+}
+.Posts{
+
+    background-color: rgb(204, 170, 76);
+    border-radius: 5px;
+    border: solid black 1px;
+    height: 180px;
+    padding-right: 0;
+
+
+}
+.ImagemPost{
+
+    margin-top: 10px;
+    width: 150px;
+    height: 160px;
+    border-radius: 10px;
+    padding-right: 0;
+
+}
+.TextoPost{
+
+    border-radius: 10px;
+    font-size: 15px;
+    margin-top: 10px;
+    padding-left: 0;
+    color: rgb(0, 0, 0);
+    text-shadow: 1px 1px 2px rgb(255, 255, 255);
+    background-color: white;
+    text-align: center;
+}

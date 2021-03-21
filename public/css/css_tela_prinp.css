@@ -10,18 +10,20 @@
     font-size: 30px;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     overflow: auto;
+    text-shadow: 1px 1px 2px rgb(0, 0, 0);
+
 
 }
 .Trespontos{
 
-    width: 45px;
-    height: 45px;
-    margin: 10px;
-    margin-top: 20px;
+    width: 35px;
+    height: 35px;
+
 }
 .Texto{
 
     margin-left: 10px;
+    text-shadow: 2px 2px 2px rgb(0, 0, 0);
     padding: 5px;
 
 
@@ -34,7 +36,7 @@
 }
 .Linha{
 
-   position: absolute; top: 305px;
+    position: absolute; top: 285px;
 }
 
 
