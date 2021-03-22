@@ -47,6 +47,11 @@ app.get('/tela_principal2', function(req,res){
 	res.render('tela_principal2')
 
 })
+app.get('/perfil', function(req,res){
+
+	res.render('perfil')
+
+})
 
 
 app.listen(8081,function(){
