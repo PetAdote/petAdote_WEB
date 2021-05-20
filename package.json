@@ -1,28 +1,33 @@
 {
-  "name": "petadote_web",
+  "name": "react-and-express-sample",
   "version": "1.0.0",
-  "description": "Versão inicial do Projeto PetAdote (WEB)",
+  "description": "Projeto de teste para integração do framework front-end React com um back-end feito com NodeJS e o Express Framework",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --no-stdin ./app.js"
+    "start-server": "nodemon -r dotenv/config ./server/bin/www",
+    "start-client": "cd ./client && npm start --port"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PetAdote/petAdote_WEB.git"
+    "url": "git+https://github.com/LeonardoTS-ETEC-Barueri/PLUS_ReactAndExpressSample.git"
   },
-  "author": "",
+  "author": "Leonardo T.S.",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/PetAdote/petAdote_WEB/issues"
+    "url": "https://github.com/LeonardoTS-ETEC-Barueri/PLUS_ReactAndExpressSample/issues"
   },
-  "homepage": "https://github.com/PetAdote/petAdote_WEB#readme",
+  "homepage": "https://github.com/LeonardoTS-ETEC-Barueri/PLUS_ReactAndExpressSample#readme",
   "dependencies": {
-    "ejs": "^3.1.6",
-    "express": "^4.17.1"
-  }
-  ,
+    "axios": "^0.21.1",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0"
+  },
   "devDependencies": {
+    "dotenv": "^9.0.2",
     "nodemon": "^2.0.7"
-}
+  }
 }
