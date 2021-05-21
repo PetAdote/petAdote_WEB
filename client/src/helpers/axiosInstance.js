@@ -5,7 +5,19 @@ import { store } from '../redux/store';
 import { clearUser } from '../redux/actions'
 
 // Configurações básicas.
-    const axiosInstance = axios.create();
+
+    /**
+     * @default axiosInstance = axios.create({
+     *      baseURL: 'http://localhost:3000'    // Essa instância, por padrão realizará chamadas na REST API.
+     * });
+     * @summary Quando for chamar end-points de outros domínios, declare o domínio nas configurações do axios alterando a propriedade "baseURL". O exemplo abaixo é equivalente à "axios.get("http://localhost:4000/auth/refresh") ".
+     * @example axios.get('/auth/refresh', { 
+     *      baseURL: 'http://localhost:4000'
+     * });
+     */
+    const axiosInstance = axios.create({
+        baseURL: 'http://localhost:3000'    // Essa instância, por padrão realizará chamadas na REST API.
+    });
 
     axiosInstance.interceptors.response.use(null, (error) => {
 
@@ -15,7 +27,8 @@ import { clearUser } from '../redux/actions'
 
         if (code === 'EXPIRED_USER_AUTH' || code === 'AUTH_HEADER_NOT_SENT'){
 
-            return axiosInstance.get('http://localhost:4000/auth/refresh', {
+            return axiosInstance.get('/auth/refresh', {
+                baseURL: 'http://localhost:4000',           // Domínio do Back-end da aplicação.
                 withCredentials: true   // Envia os cookies httpOnly contendo o refreshToken do usuário.
             })
             .then((response) => {

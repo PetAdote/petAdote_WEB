@@ -48,7 +48,7 @@ router.post('/login', async (req, res, next) => {
         return res.status(400).send('EMPTY_FIELDS');
     }
 
-    axios.post('http://localhost:3000/autenticacoes/usuarios/login', {
+    axios.post('/autenticacoes/usuarios/login', {
         email: email,
         senha: password
     }, {
@@ -169,7 +169,7 @@ router.get('/logout', async (req, res, next) => {
     // console.log(userAccessToken);
     // return res.status(200).send('Oi');
 
-    axios.delete('http://localhost:3000/autenticacoes/usuarios/logout', {
+    axios.delete('/autenticacoes/usuarios/logout', {
         headers: {
             'Authorization': `Bearer ${userAccessToken}`
         },

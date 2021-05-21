@@ -24,7 +24,7 @@
     app.use(
         cors({
             credentials: true,                  // Se withCredentials for passado
-            origin: 'http://localhost:4001'     // A request origin tem que ser válida.
+            origin: 'http://localhost:4001'     // A request origin tem que ser válida (e nesse caso, só receberemos requests do domínio do nosso próprio front-end).
 
             // credentials permite a análise e transição de cookies nas requests/responses.
             // O front-end deve informar que a requisição será feita com credentials, e o server deve aceitar essas credentials.

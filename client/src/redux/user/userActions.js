@@ -92,7 +92,7 @@ export const fetchUser = () => {
 
         // });
 
-        axios.get('http://localhost:3000/usuarios/?get=self')
+        axios.get('/usuarios/?get=self')
         .then((response) => {
 
             const user = response.data?.usuario

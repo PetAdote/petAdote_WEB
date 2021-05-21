@@ -6,9 +6,19 @@ const { default: axios } = require('axios');
     const refreshUserTokens = require('./refreshUserTokens_stash');
 
 // Configurações básicas.
-    const axiosInstance = axios.create(//{
-        // userAuthRefresh: null   // config onde o Refresh Token do Usuario deve ser passado (Para a renovação silenciosa da sessão ).
-    /*}*/);     // Cria uma instância personalizada do axios.
+
+    /**
+     * @default axiosInstance = axios.create({
+     *      baseURL: 'http://localhost:3000'    // Essa instância, por padrão realizará chamadas na REST API.
+     * });
+     * @summary Quando for chamar end-points de outros domínios, declare o domínio nas configurações do axios alterando a propriedade "baseURL". O exemplo abaixo é equivalente à "axios.get("http://localhost:4000/auth/refresh") ".
+     * @example axios.get('/todos/1', { 
+     *      baseURL: 'https://jsonplaceholder.typicode.com'
+     * });
+     */
+    const axiosInstance = axios.create({
+        baseURL: 'http://localhost:3000'
+    });     // Cria uma instância personalizada do axios.
             // Atenção, não atribua nenhuma configuração padrão além dos interceptors nessa instância.
             // Se não todos os usuários do sistema serão afetados, pois o server utiliza essa instância de forma global.
     

@@ -15,7 +15,8 @@
 
     import axios from './helpers/axiosInstance';
 
-axios.get('http://localhost:4000/auth/refresh', {
+axios.get('/auth/refresh', {
+    baseURL: 'http://localhost:4000',   // Domínio do Back-end da aplicação.
     withCredentials: true
 })
 .then((response) => {

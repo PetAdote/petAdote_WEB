@@ -52,7 +52,7 @@ module.exports = async (req, res, next) => {
         console.log('\n[validate_userTokens] A requisição possui apenas um httpOnly Cookie apresentando o refresh token. Iniciando tentativa de renovação dos JWTs antes de continuar a requisição...');
     }
 
-    const refreshedTokens = await axios.post(`http://127.0.0.1:3000/autenticacoes/usuarios/refresh`, {
+    const refreshedTokens = await axios.post(`/autenticacoes/usuarios/refresh`, {
         refreshToken: req.cookies.auth_refresh
     }, {
         headers: {
@@ -152,7 +152,7 @@ module.exports = async (req, res, next) => {
                 );
             }
         // Fim da verificação do cookie de persistencia da autenticação do usuário
-        
+
     // Fim da renovação do cabeçalho de requisições e httpOnly Cookie.
 
     // Quando a resposta da requisição for enviada depois desse Middleware, essas alterações entrarão em efeito.
