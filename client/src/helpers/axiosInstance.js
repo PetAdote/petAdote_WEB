@@ -15,13 +15,13 @@ import { clearUser } from '../redux/actions'
 
         if (code === 'EXPIRED_USER_AUTH' || code === 'AUTH_HEADER_NOT_SENT'){
 
-            return axiosInstance.get('http://localhost:4000/auth/verify', {
-                withCredentials: true
+            return axiosInstance.get('http://localhost:4000/auth/refresh', {
+                withCredentials: true   // Envia os cookies httpOnly contendo o refreshToken do usuário.
             })
             .then((response) => {
-                if (response.data){
+                if (response.data.renewed_accessToken){ // Retorna os tokens renovados do usuário após verificação do back-end.
                     
-                    console.log('Os tokens do usuário foram renovados...'/*, response.data*/);
+                    console.log('Os tokens do usuário foram renovados...', response.data);
 
                     // Se o usuário não possuia a Authorization no cabeçalho das requisições,
                     // mas teve os Tokens renovados, ele já estava logado...
@@ -29,11 +29,12 @@ import { clearUser } from '../redux/actions'
                     axiosInstance.defaults.headers['Authorization'] = `Bearer ${response.data.renewed_accessToken}`;
 
                     error.config.headers['Authorization'] = `Bearer ${response.data.renewed_accessToken}`;
-                    return axiosInstance.request(error.config);
+                    return axiosInstance.request(error.config); // action "fetchUser()"; finaliza o processo de renovação do usuário no front-end.
 
                 }
-
-                return Promise.reject(new Error('Algo inesperado aconteceu ao renovar os tokens expirados do usuário.', response));
+                
+                console.log('Front AxiosInstance - Resposta inesperada ao renovar os tokens de acesso:', response);
+                return Promise.reject( new Error('Algo inesperado aconteceu ao renovar os tokens expirados do usuário.') );
 
             })
             .catch((error) => {
@@ -50,6 +51,7 @@ import { clearUser } from '../redux/actions'
             })
         }
 
+        console.log('Front AxiosInstance - Erro inesperado:', error.response);
         return Promise.reject(error);
 
     })

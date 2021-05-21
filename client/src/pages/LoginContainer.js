@@ -19,7 +19,9 @@ import {
     Grid,
     Typography,
     TextField,
-    Button
+    Button,
+    FormControlLabel,
+    Checkbox
 } from '@material-ui/core'
 
 
@@ -32,7 +34,8 @@ const LoginContainer = (props) => {
 
     const [credentials, setCredentials] = useState({
         email: '',
-        password: ''
+        password: '',
+        remember: false
     });
 
     const { user } = props.userData;
@@ -56,45 +59,40 @@ const LoginContainer = (props) => {
 
     }, [user, history])
 
-
-
     const handleLogin = (ev) => {
         ev.preventDefault();
 
-        const {email, password} = credentials;
+        const {email, password, remember} = credentials;
 
         axios.post('http://localhost:4000/auth/login', {
             email,
-            password
+            password,
+            remember
         }, {
             withCredentials: true
         })
         .then((response) => {
             
-            if (response.data) {
-                if (response.data.user_accessToken){
+            if (response.data?.user_accessToken || response.data?.inactiveUser_accessToken){
 
-                    // Definindo o Access Token do Usuário na memória (Ficará salvo no cabeçalho das próximas requisições com essa instância do axios).
-                    axios.defaults.headers.common = {
-                        'Authorization': `Bearer ${response.data.user_accessToken || response.data.inactiveUser_accessToken}`
-                    }
-
-                    // Definindo que de agora em diante as requisições enviarão o httpOnly Cookie com o Refresh Token.
-                    // axios.defaults.withCredentials = true;  
-
-                    // console.log('Authorization Header and httpOnly Cookie has been set up.');
-                    // console.log(console.log(axios.defaults.headers));
-
-                    // Despachando a Action para capturar e armazenar os dados do usuário na Redux Store.
-                    props.fetchUser();
-                    console.log('Usuário autenticado com sucesso');
+                // Definindo o Access Token do Usuário na memória (Ficará salvo no cabeçalho das próximas requisições com essa instância do axios).
+                axios.defaults.headers.common = {
+                    'Authorization': `Bearer ${response.data.user_accessToken || response.data.inactiveUser_accessToken}`
                 }
 
-                console.log(response.data); // Deverá conter os Tokens JWT do usuário...
+                // Definindo que de agora em diante as requisições enviarão o httpOnly Cookie com o Refresh Token.
+                // axios.defaults.withCredentials = true;  
 
-            } else {
-                console.log(response.status);
+                // console.log('Authorization Header and httpOnly Cookie has been set up.');
+                // console.log(console.log(axios.defaults.headers));
+
+                // Despachando a Action para capturar e armazenar os dados do usuário na Redux Store.
+                props.fetchUser();
+                return console.log('Usuário autenticado com sucesso');
             }
+
+            console.log('handleLogin Response:', response);
+
         })
         .catch((error) => {
             console.log(error?.response?.data || error?.message);
@@ -137,6 +135,7 @@ const LoginContainer = (props) => {
     
 
     return ( 
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <Grid container component="main" className={styles.root}>
             <CssBaseline />
             <Grid item xs={9} sm={6} md={6} lg={4}>
@@ -180,6 +179,19 @@ const LoginContainer = (props) => {
                                     required
                                 />
                             </Grid>
+                            <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                <Checkbox
+                                    checked={ credentials.remember }
+                                    onChange={ (ev) => { setCredentials({ ...credentials, remember: ev.target.checked }) } }
+                                    name="checkedB"
+                                    color="primary"
+                                />
+                                }
+                                label="Lembre-se de mim"
+                            />
+                            </Grid>
                             <Grid item xs={4}>
                                 <Button 
                                     variant='contained'
@@ -217,8 +229,32 @@ const LoginContainer = (props) => {
                         </Grid>
                     </form>
                 </Container>
+
+            </Grid>
+
+            {/* <Grid item xs={12}>
+                <Typography variant='h1'>TESTE DE RESPONSIVIDADE</Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+                <Typography variant='h1'>TESTE DE RESPONSIVIDADE</Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+                <Typography variant='h1'>TESTE DE RESPONSIVIDADE</Typography>
+            </Grid>
+
+            <Grid item xs={12}>
+                <Typography variant='h1'>TESTE DE RESPONSIVIDADE</Typography>
+            </Grid> */}
+            
+        </Grid>
+        <Grid container component='footer' style={{ backgroundColor: '#2c2b2e' }}>
+            <Grid item xs={12}>
+                <Typography component="p" align='center' style={{ color: '#e8e8e8' }}>Copyright © Sistemas Pet Adote 2021.</Typography>
             </Grid>
         </Grid>
+        </div>
     );
 }
 
@@ -227,7 +263,10 @@ const useStyles = makeStyles((theme) => {
 
     return {
         root: {
-            height: '100vh',
+            // height: '100vh',
+
+            flex: '1',
+
             alignItems: 'center',
             justifyContent: 'center',
             backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://source.unsplash.com/random)',

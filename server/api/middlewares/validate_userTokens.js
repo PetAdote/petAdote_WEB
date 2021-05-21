@@ -24,9 +24,10 @@ module.exports = async (req, res, next) => {
             return next();
         }
 
-        return res.status(404).send('USER_NOT_FOUND');
+        return res.status(202).send('USER_REFRESH_NOT_FOUND'); // 202 - Accepted - A requisição foi aceita, podendo ou não ser processada. - Processamos com "USER_AUTH_NOT_FOUND".
     }
 
+    // console.log(req.headers);
 
     if (req.headers.authorization){
         // Se a requisição do usuário já apresenta o httpOnly Cookie e possui um authorization header... 
@@ -39,12 +40,17 @@ module.exports = async (req, res, next) => {
         const UserATExpInMS = new Date(decodedUserAT.exp * 1000).getTime();
 
         if (now < UserATExpInMS){
-            console.log('\n[validate_userTokens] O token de acesso do usuário ainda é válido!');
+            console.log('\n[validate_userTokens] O token de acesso do usuário ainda é válido! Continuando requisição...');
             return next();
+        } else {
+            console.log('\n[validate_userTokens] O token de acesso do usuário não é mais válido! Renovando JWTs antes de continuar a requisição...');
         }
     }
     
-    console.log('\n[validate_userTokens] O token de acesso do usuário está expirado, renovando...');
+    if (!req.headers.authorization){
+        // A requisição não apresentou os cabeçalhos de autorização com o access token mas o usuário possui um refresh token (httpOnly Cookie), ou seja, estava autenticado anteriormente. Renovando JWTs antes de continuar a requisição...
+        console.log('\n[validate_userTokens] A requisição possui apenas um httpOnly Cookie apresentando o refresh token. Iniciando tentativa de renovação dos JWTs antes de continuar a requisição...');
+    }
 
     const refreshedTokens = await axios.post(`http://127.0.0.1:3000/autenticacoes/usuarios/refresh`, {
         refreshToken: req.cookies.auth_refresh
@@ -102,15 +108,22 @@ module.exports = async (req, res, next) => {
         // Renova o Access Token para as próximas requisições...    
             res.setHeader('Authorization', user_accessToken || inactiveUser_accessToken);
 
-        // Capturando a data de expiração do Token para o httpOnly Cookie.
+        // Configurando a persistência da autenticação do usuário com base na opção "Lembrar autenticação".
+        
+            // Capturando a data de expiração do Token para o httpOnly Cookie.
             const decodedRefresh = jwt.decode(user_refreshToken || inactiveUser_refreshToken);
             const now = new Date().getTime();
             const then = new Date(decodedRefresh.exp * 1000).getTime();
             const timeDifInMs = (then - now);
-            const tokenExpirationDate = new Date(new Date().getTime() + timeDifInMs)
-        // Fim da captura da data de expiração do Token para o httpOnly Cookie.
+            const tokenExpirationDate = req.cookies.remember ? new Date(new Date().getTime() + timeDifInMs) : null;
+                // Se ao logar, o usuário especificou que quer persistir a autenticação...
+                // Mantenha controle da data de expiração do Refresh Token no httpOnly cookie.
+                // Caso contrário, null = session only cookie.
+            // Fim da captura da data de expiração do Token para o httpOnly Cookie.
+            
+        // Fim das configurações de persistência de autenticação do usuário.
 
-        // Atualiza o httpOnly cookie com o Refresh Token renovado para as próximas requisições.
+        // Atualiza o httpOnly Cookie que contém o Refresh Token, renovando-o para as próximas requisições.
             res.cookie(
                 "auth_refresh",
                 user_refreshToken || inactiveUser_refreshToken, 
@@ -122,6 +135,24 @@ module.exports = async (req, res, next) => {
                     // secure: true // O cookie só será passado via https.
                 }
             );
+        // Fim da atualização do httpOnly Cookie que contém o Refresh Token.
+
+        // Verifica se o cookie de persistencia da autenticação do usuário foi enviado para atualizá-lo.
+            if (req.cookies.remember){
+                res.cookie(
+                    'remember',
+                    'true',
+                    {
+                        sameSite: 'strict',
+                        path: '/',
+                        expires: tokenExpirationDate,
+                        httpOnly: true,
+                        // secure: true // O cookie só será passado via https.
+                    }
+                );
+            }
+        // Fim da verificação do cookie de persistencia da autenticação do usuário
+        
     // Fim da renovação do cabeçalho de requisições e httpOnly Cookie.
 
     // Quando a resposta da requisição for enviada depois desse Middleware, essas alterações entrarão em efeito.

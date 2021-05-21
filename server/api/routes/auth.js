@@ -42,7 +42,7 @@
 // Rotas.
 router.post('/login', async (req, res, next) => {
 
-    const { email, password } = req.body;
+    const { email, password, remember } = req.body;
 
     if (!email || !password){
         return res.status(400).send('EMPTY_FIELDS');
@@ -66,25 +66,47 @@ router.post('/login', async (req, res, next) => {
             const now = new Date().getTime();
             const then = new Date(decodedRefresh.exp * 1000).getTime();
             const timeDifInMs = (then - now);
-            const tokenExpirationDate = new Date(new Date().getTime() + timeDifInMs)
+            const tokenExpirationDate = remember ? new Date(new Date().getTime() + timeDifInMs) : null;
             // Fim da captura da data de expiração do Token para o httpOnly Cookie.
 
-            return res.status(200)
-            .cookie(
-                "auth_refresh",
-                response.data.user_refreshToken || response.data.inactiveUser_refreshToken, 
-                {
-                    sameSite: 'strict',
-                    path: '/',
-                    expires: tokenExpirationDate,
-                    httpOnly: true,
-                    // secure: true // O cookie só será passado via https.
+            // Inicializa o httpOnly Cookie contendo o Refresh Token do usuário para enviá-lo na resposta.
+                res.cookie(
+                    "auth_refresh",
+                    response.data.user_refreshToken || response.data.inactiveUser_refreshToken, 
+                    {
+                        sameSite: 'strict',
+                        path: '/',
+                        expires: tokenExpirationDate,
+                        httpOnly: true,
+                        // secure: true // O cookie só será passado via https.
+                    }
+                );  // Cookie httpOnly contendo o Refresh Token do usuário.
+            // Fim da inicialização do httpOnly Cookie contendo o Refresh Token.
+
+            // Verifica se o usuário quer persistir a autenticação e gera um httpOnly Cookie que informará a renovação da autenticação sobre a persistencia.
+                if (remember){
+
+                    res.cookie(
+                        'remember',
+                        'true',
+                        {
+                            sameSite: 'strict',
+                            path: '/',
+                            expires: tokenExpirationDate,
+                            httpOnly: true,
+                            // secure: true // O cookie só será passado via https.
+                        }
+                    );
+
                 }
-            )
+            // Fim da verificação do desejo do usuário de persistir a autenticação.
+
+            return res.status(200)
             .send(response.data);
             
         } else {
             console.log('Response Status: ', response.status);
+            console.log('Response:', response.data);
         }
     })
     .catch((error) => {
@@ -133,6 +155,7 @@ router.get('/logout', async (req, res, next) => {
     // -------------------------------------------------------------
 
     let userAccessToken = undefined;
+    // console.log('headers at auth logout:', req.headers)
 
     if (req.headers?.authorization){
         userAccessToken = req.headers.authorization.split(' ')[1];
@@ -162,6 +185,7 @@ router.get('/logout', async (req, res, next) => {
             // Descartando os Cookies...
             return res.status(200)
                 .clearCookie("auth_refresh")
+                .clearCookie("remember")
                 .send('USER_DISCONNECTED_SUCCESSFULLY');    // Mensagem enviada para o front quando o usuário for desconectado com sucesso... Despache "clearUser()" para a Redux Store.
             
         } 
@@ -190,7 +214,7 @@ router.get('/logout', async (req, res, next) => {
 
 });
 
-router.get('/verify', async (req, res, next) => {
+router.get('/refresh', async (req, res, next) => {
 
     // Chamada para a comunicação direta entre o Front-end e a REST (Renovação direta dos Tokens)...
     // A renovação silenciosa acontecerá por meio do Middleware "validate_userTokens".
@@ -199,7 +223,7 @@ router.get('/verify', async (req, res, next) => {
     const renewed_accessToken = req.headers.authorization?.split(' ')[1];
     const renewed_refreshToken = req.cookies.auth_refresh;
 
-    console.log('[auth/verify] - Os tokens foram renovados pelo middleware de renovação.');
+    console.log('[auth/refresh] - Os tokens foram renovados pelo middleware de renovação.');
 
     return res.status(200).json({
         renewed_accessToken,
