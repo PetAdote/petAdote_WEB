@@ -67,7 +67,8 @@ const Home = (props) => {
 
     const handleLogout = (ev) => {
 
-        axios.get('http://localhost:4000/auth/logout', {
+        axios.get('/auth/logout', {
+            baseURL: 'http://localhost:4000',   // Domínio do Back-end da aplicação.
             withCredentials: true
         })
         .then((response) => {

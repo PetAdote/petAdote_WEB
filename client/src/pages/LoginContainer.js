@@ -64,11 +64,12 @@ const LoginContainer = (props) => {
 
         const {email, password, remember} = credentials;
 
-        axios.post('http://localhost:4000/auth/login', {
+        axios.post('/auth/login', {
             email,
             password,
             remember
         }, {
+            baseURL: 'http://localhost:4000',   // Domínio do Back-end da aplicação.
             withCredentials: true
         })
         .then((response) => {

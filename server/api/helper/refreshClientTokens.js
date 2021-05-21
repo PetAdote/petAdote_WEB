@@ -7,7 +7,7 @@
  * @returns Atualiza os tokens de acesso da aplicação e retorna o Access Token renovado, para continuar as requisições.
  */
 module.exports = () => {
-    return axios.post(`http://127.0.0.1:3000/autenticacoes/apis/refresh`, {
+    return axios.post(`/autenticacoes/apis/refresh`, {
         refreshToken: process.env.CLIENT_RT
     })
     .then(async (res) => {
@@ -30,7 +30,7 @@ module.exports = () => {
 
             if (error.response.data.error.code === 'EXPIRED_CLIENT_REFRESH'){
                 // Se o Refresh Token do Cliente estiver expirado, renove-o autenticand-se novamente.
-                axios.get(`http://127.0.0.1:3000/autenticacoes/apis/login/?cliente=${process.env.MY_REST_APP_ID}&senha=${process.env.MY_REST_APP_PASS}`)
+                axios.get(`/autenticacoes/apis/login/?cliente=${process.env.MY_REST_APP_ID}&senha=${process.env.MY_REST_APP_PASS}`)
                 .then(async (res) => {
 
                     if (res.status == 200 && res.data?.client_accessToken){
