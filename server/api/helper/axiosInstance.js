@@ -26,14 +26,14 @@ const { default: axios } = require('axios');
         // Um interceptor é uma espécie de middleware que verifica a resposta de sucesso ou falha antes dos blocos .then ou .catch...
         // Permitindo que verificações e validações ocorram antes da requisição ser concluída ao fim.
 
-        // console.log('Error received on request');
-        // console.log(error.response.data);
+        console.log('Error received on request');
+        console.log(error.response.data);
 
         const { code } = error.response.data;
         
         // Se o Access Token da Aplicação expirar...
         if (code === 'EXPIRED_CLIENT_AUTH'){
-
+            console.log('Expired Client auth! Ok tratando...');
             // 'refreshClientTokens()' é um helper que renova os Tokens e retorna o Token de Acesso do Cliente.
             return refreshClientTokens()
             .then((result) => { 
@@ -86,6 +86,12 @@ const { default: axios } = require('axios');
 
             // })
 
+        }
+
+        if (code === 'INVALID_AUTH_HEADER' || 'EXPIRED_AUTH_HEADER') {
+            console.error('[server_axiosInstance] AS AUTHs ENVIADAS APRESENTARAM PROBLEMAS!');
+            console.log(code);
+            console.error(error.message);
         }
 
         return Promise.reject(error);  // Se não retornou "axios.request(newConfig)" --- O erro é exibido no .catch da requisição.

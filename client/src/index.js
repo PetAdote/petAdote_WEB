@@ -15,11 +15,15 @@
 
     import axios from './helpers/axiosInstance';
 
+    console.log('Index 01:', axios.defaults.headers);
+
 axios.get('/auth/refresh', {
     baseURL: 'http://localhost:4000',   // Domínio do Back-end da aplicação.
     withCredentials: true
 })
 .then((response) => {
+
+    console.log('Index 02:', axios.defaults.headers);
 
     if (response.data?.renewed_accessToken){
 
