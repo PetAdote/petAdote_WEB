@@ -157,7 +157,7 @@ module.exports = async (req, res, next) => {
 
     // Quando a resposta da requisição for enviada depois desse Middleware, essas alterações entrarão em efeito.
 
-    // console.log('Usuário renovado, passando requisição adiante...');
+    console.log('\nUsuário renovado, passando requisição adiante...');
     // console.log('\nNovos headers...');
     // console.log('\nAuthorization Header: ', req.headers.authorization?.split(' ')[1]);
     // console.log('\nRefresh Cookie: ', req.cookies.auth_refresh);

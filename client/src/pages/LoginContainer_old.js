@@ -2,84 +2,41 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { connect } from 'react-redux';      // Responsável por fazer a subscription do nosso Componente React ao Redux Store.
-
-// Utilidades.
-import { makeStyles } from '@material-ui/core/styles';
 import axios from '../helpers/axiosInstance';
 
+import { makeStyles } from '@material-ui/core/styles';
+
 // Actions.
-import { fetchUser, clearUser, openSnackbar }
-    from '../redux/actions';
+import { fetchUser, clearUser } from '../redux/actions';
 
-// Components.
-import { Grid, Typography, TextField, Button, FormControlLabel, Checkbox}
-    from '@material-ui/core';
+// My Components.
+// ...
 
-// Inicializações.
-const useStyles = makeStyles((theme) => {
-    return {
-        mainContainer: {
-            flex: 1,
-            // marginTop: '65px',   // Quando tiver que levar em consideração o AppBar.
-            alignItems: 'center',
-            justifyContent: 'center'
-        },
-        formContainer: {
-            backgroundColor: 'rgba(255, 255, 255, 0.75)',
-            padding: '20px',
-            border: '1px solid black',
-            borderRadius: '10px',
-        },
-        form: {
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%'
-        },
-        inputBorder: {
-            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                borderColor: "black"
-            },
-            "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                borderColor: "green"
-            },
-            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "black"
-            },
-            "& .MuiOutlinedInput-input": {
-                color: "black"
-            },
-            "&:hover .MuiOutlinedInput-input": {
-                color: "green"
-            },
-            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-                color: "black"
-            },
-            "& .MuiInputLabel-outlined": {
-                color: "black"
-            },
-            "&:hover .MuiInputLabel-outlined": {
-                color: "green"
-            },
-            "& .MuiInputLabel-outlined.Mui-focused": {
-                color: "black"
-            }
-        },
-        link: {
-            textDecoration: 'none',
-            color: '#2b78e4',
-            "&:hover": {
-                color: '#085394'
-            }
-        }
-    }
+// MUI Components.
+import {
+    Container,
+    Grid,
+    Typography,
+    TextField,
+    Button,
+    FormControlLabel,
+    Checkbox,
+    Snackbar
+} from '@material-ui/core';
 
-});
+import {
+    Alert
+} from '@material-ui/lab';
+
+
 
 // Functional Component.
 const LoginContainer = (props) => {
 
     const styles = useStyles();
     const history = useHistory();
+
+    const [isSnackbarOpen, setIsSnackbarOpen] = React.useState(false);
 
     const [credentials, setCredentials] = useState({
         email: '',
@@ -88,7 +45,7 @@ const LoginContainer = (props) => {
     });
 
     const { user } = props.userData;
-    const { openSnackbar, fetchUser } = props;
+    // const { fetchUser } = props;
 
     useEffect(() => {
 
@@ -103,11 +60,16 @@ const LoginContainer = (props) => {
 
     }, [user, history]);
 
+    const handleSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+          return;
+        }
+    
+        setIsSnackbarOpen(false);
+      };
 
     const handleLogin = (ev) => {
         ev.preventDefault();
-
-        console.log('BeforeLogin', axios.defaults.headers.common);
 
         const {email, password, remember} = credentials;
 
@@ -120,8 +82,6 @@ const LoginContainer = (props) => {
             withCredentials: true
         })
         .then((response) => {
-
-            console.log('LoginContainer:', axios.defaults.headers);
             
             if (response.data?.user_accessToken || response.data?.inactiveUser_accessToken){
 
@@ -130,10 +90,6 @@ const LoginContainer = (props) => {
                     'Authorization': `Bearer ${response.data.user_accessToken || response.data.inactiveUser_accessToken}`
                 }
 
-                console.log('BeforePostLogin: ', response.data);
-
-                console.log('PostLogin', axios.defaults.headers.common);
-
                 // Definindo que de agora em diante as requisições enviarão o httpOnly Cookie com o Refresh Token.
                 // axios.defaults.withCredentials = true;  
 
@@ -141,15 +97,8 @@ const LoginContainer = (props) => {
                 // console.log(console.log(axios.defaults.headers));
 
                 // Despachando a Action para capturar e armazenar os dados do usuário na Redux Store.
-                return fetchUser()
-                .then((result) => {
-                    console.log(result);
-                    console.log('Usuário autenticado com sucesso');
-                })
-                .catch((error) => {
-                    console.log('Algo deu errado ao buscar os dados do usuário:', error);
-                })
-                // return console.log('Usuário autenticado com sucesso');
+                props.fetchUser();
+                return console.log('Usuário autenticado com sucesso');
             }
 
             console.log('handleLogin Response:', response);
@@ -158,11 +107,8 @@ const LoginContainer = (props) => {
         .catch((error) => {
 
             if (error?.response?.data === 'EMPTY_FIELDS'){
-                return openSnackbar('Preencha todos os campos!', 'info');
-            }
-
-            if (error?.response?.data?.code === 'INVALID_USER_CREDENTIALS'){
-                return openSnackbar('Credenciais Inválidas!', 'error');
+                // return alert('Preencha os campos!');
+                return setIsSnackbarOpen(true);
             }
 
             console.log(error?.response?.data || error?.message);
@@ -170,15 +116,18 @@ const LoginContainer = (props) => {
 
     }
 
-    return (
+    return ( 
         <>
-        { 
-            !user ?
-                <Grid container component="main" className={styles.mainContainer}>
 
-                    <Grid item xs={9} sm={6} md={6} lg={4} className={styles.formContainer}>
+        <Grid container component="main" className={styles.root}>
+            {/* <CssBaseline /> */}
+            <Grid item xs={9} sm={6} md={6} lg={4}>
 
-                        <Grid container component="form" spacing={1} justify='center' className={styles.form}>
+                <Container className={styles.paper} >
+                    
+                    <form className={styles.form} >
+
+                        <Grid container spacing={1} justify='center'>
 
                             <Grid item xs={12} >
                                 <Typography component="h1" variant="h5" align='center'>ENTRAR</Typography>
@@ -250,20 +199,109 @@ const LoginContainer = (props) => {
                                     </Grid>
                                 </Grid>
                             </Grid>
+                            
+                        </Grid>
 
-                        </Grid> {/* form End */}
+                    </form>
 
-                    </Grid> {/* formContainer End */}
+                </Container>
 
-                </Grid> /* mainContainer End */
-            : null
+            </Grid>
+            
+        </Grid>
+
+        { isSnackbarOpen &&
+            <Snackbar open={isSnackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
+                <Alert elevation={6} variant="filled" onClose={handleSnackbarClose} severity="warning">
+                    Preencha todos os campos por favor.
+                </Alert>
+            </Snackbar>
         }
+
+        <Grid container component='footer' style={{ backgroundColor: '#2c2b2e' }}>
+            <Grid item xs={12}>
+                <Typography component="p" align='center' style={{ color: '#e8e8e8' }}>Copyright © Sistemas Pet Adote 2021.</Typography>
+            </Grid>
+        </Grid>
+
         </>
     );
-
 }
 
-// Redux Store Mapping.
+
+const useStyles = makeStyles((theme) => {
+
+    return {
+        root: {
+            // height: '100vh',
+
+            flex: '1',
+
+            alignItems: 'center',
+            justifyContent: 'center',
+            // backgroundImage: 'linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(https://source.unsplash.com/random)',
+            // backgroundRepeat: 'no-repeat',
+            // backgroundSize: 'cover',
+            // backgroundAttachment: 'fixed',
+            // backgroundPosition: 'center',
+        },
+        paper: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            backgroundColor: 'rgba(255, 255, 255, 0.75)',
+            padding: '20px',
+            border: '1px solid black',
+            borderRadius: '10px',
+        },
+        form: {
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%'
+        },
+        input: {
+            color: 'black',
+        },
+        inputBorder: {
+            "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderColor: "black"
+            },
+            "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
+                borderColor: "green"
+            },
+            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "black"
+            },
+            "& .MuiOutlinedInput-input": {
+                color: "black"
+            },
+            "&:hover .MuiOutlinedInput-input": {
+                color: "green"
+            },
+            "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
+                color: "black"
+            },
+            "& .MuiInputLabel-outlined": {
+                color: "black"
+            },
+            "&:hover .MuiInputLabel-outlined": {
+                color: "green"
+            },
+            "& .MuiInputLabel-outlined.Mui-focused": {
+                color: "black"
+            }
+        },
+        link: {
+            textDecoration: 'none',
+            color: '#2b78e4',
+            "&:hover": {
+                color: '#085394'
+            }
+        }
+    }
+
+});
+
 const mapStateToProps = (state) => {
     return {
         userData: state.user
@@ -273,12 +311,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         fetchUser: () => { return dispatch( fetchUser() ) },
-        clearUser: () => { return dispatch( clearUser() ) },
-        openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) }
+        clearUser: () => { return dispatch( clearUser() ) }
     }
 }
 
-// Exportações.
 export default connect(
     mapStateToProps,
     mapDispatchToProps

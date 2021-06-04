@@ -28,11 +28,11 @@ const reducer = (state = initialState, action) => {
                 user: null,
                 error: action.payload
             }
-        case userActionTypes.CLEAR_USER:
-            return {
-                ...state,
-                user: null
-            }
+        // case userActionTypes.CLEAR_USER:
+        //     return {
+        //         ...state,
+        //         user: null
+        //     }
         default: 
             return state;
     }

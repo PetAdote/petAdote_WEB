@@ -220,8 +220,13 @@ router.get('/refresh', async (req, res, next) => {
     // A renovação silenciosa acontecerá por meio do Middleware "validate_userTokens".
     // Acontecerá via interceptors das requisições do front-end.
 
+    // console.log('Auth?', req.headers);
+    // console.log('cookies?', req.cookies);
+
     const renewed_accessToken = req.headers.authorization?.split(' ')[1];
     const renewed_refreshToken = req.cookies.auth_refresh;
+
+    // console.log('renewed?', renewed_accessToken);
 
     console.log('[auth/refresh] - Os tokens foram renovados pelo middleware de renovação.');
 

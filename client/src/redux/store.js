@@ -8,6 +8,9 @@ import rootReducer from './rootReducer';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
+// Actions.
+import { CLEAR_USER } from './user/userTypes';
+
     
 const persistConfig = {
     key: 'root',
@@ -23,8 +26,22 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 // Fim das configurações da Redux-Persist.
 
+const completeReducer = (state, action) => {    // Permite a renovação das States da Aplicação após o logout do usuário.
+    
+    switch(action.type){
+        case CLEAR_USER:
+            storage.removeItem('persist:root');
+            state = undefined;
+            break;
+        default: 
+            return persistedReducer(state, action);
+    }
+
+    return persistedReducer(state, action);
+}
+
 const store = createStore(
-    persistedReducer,
+    completeReducer,
     composeWithDevTools(
         applyMiddleware(thunk)    
     )
