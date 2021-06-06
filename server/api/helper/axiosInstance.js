@@ -3,7 +3,6 @@ const { default: axios } = require('axios');
 
     // Utilidades para os Interceptors.
     const refreshClientTokens = require('./refreshClientTokens');
-    const refreshUserTokens = require('./refreshUserTokens_stash');
 
 // Configurações básicas.
 

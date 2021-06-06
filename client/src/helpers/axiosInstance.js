@@ -21,7 +21,7 @@ import { clearUser } from '../redux/actions'
 
     axiosInstance.interceptors.response.use(null, (error) => {
 
-        const { code } = error?.response?.data;
+        const code  = error?.response?.data?.code;
 
         console.log('Error axiosInstance Front-End:', error.response);
 

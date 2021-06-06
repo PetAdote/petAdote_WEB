@@ -275,11 +275,12 @@ const AnnouncementDetails = (props) => {
                                                 </Typography>
                                                 <Typography component='p' variant='caption' align='center' style={{ color: 'dimgrey' }}>
                                                     {
-                                                        announcementDetails.animal.estado_adocao === 'Aberto' ?
-                                                        'Adote-me!'
-                                                        : announcementDetails.animal.estado_adocao === 'Em processo adotivo' ?
+                                                        announcementDetails.animal.estado_adocao === 'Em anuncio' ?
+                                                            'Adote-me!'
+                                                        :
+                                                        announcementDetails.animal.estado_adocao === 'Em processo adotivo' ?
                                                           'Alguém se interessou em me adotar!'
-                                                          : ''
+                                                        : ''
                                                     }
                                                 </Typography>
                                             </Grid>

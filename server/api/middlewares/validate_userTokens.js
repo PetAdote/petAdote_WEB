@@ -24,6 +24,12 @@ module.exports = async (req, res, next) => {
             return next();
         }
 
+        if (req.url === '/registration/'){ 
+            // Se o usuário está se autenticando... Vá adiante.
+            console.log('[validate_userTokens] O usuário está cadastrando uma nova conta.')
+            return next();
+        }
+
         return res.status(202).send('USER_REFRESH_NOT_FOUND'); // 202 - Accepted - A requisição foi aceita, podendo ou não ser processada. - Processamos com "USER_AUTH_NOT_FOUND".
     }
 
