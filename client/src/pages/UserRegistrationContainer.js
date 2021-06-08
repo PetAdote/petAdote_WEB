@@ -57,7 +57,8 @@ const useStyles = makeStyles((theme) => {
             backgroundColor: 'rgba(0,0,0,0)',
             border: '1px solid darkgrey',
             borderRadius: '4px',
-            padding: '8px 0 0 0'
+            padding: '8px 0 0 0',
+            overflow: 'auto'
         },
         stepLabelBox: {
             "& .MuiStepLabel-label.MuiStepLabel-alternativeLabel": {
@@ -657,10 +658,17 @@ const FormConclusionStep = (props) => {
 
             <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
                 <FormControlLabel 
-                    control={<Checkbox checked={newUserData.aceitou} color='primary'/>}
+                    // value={newUserData.aceitou}
+                    control={
+                        <Checkbox 
+                            checked={newUserData.aceitou}
+                            color='primary'
+                            onChange={(ev) => { handleUserAgreementAcceptance() }}
+                        />
+                    }
                     label="Li e estou de acordo com os termos de uso."
                     labelPlacement='end'
-                    onClick={handleUserAgreementAcceptance}
+                    // onClick={handleUserAgreementAcceptance}
                 />
             </Grid>
 
@@ -962,6 +970,7 @@ const UserRegistration = (props) => {
 
                             try {
                                 fetchUser();
+                                setIsLoading(false);
                                 setNewUserData(initialUserData);
                                 console.log('[UserRegistrationContainer.js/atLoginAfterReg]: Usuário autenticado com sucesso');
                             } catch (error) {
@@ -989,6 +998,10 @@ const UserRegistration = (props) => {
                     switch(code){
                         case 'INVALID_REQUEST_FIELDS': 
                             openSnackbar('Campos obrigatórios estão faltando. Revise seus dados.', 'error');
+                            setActiveStep(0);
+                            return;
+                        case 'INVALID_AUTH_HEADER':
+                            openSnackbar('Não foi possível finalizar seu cadastro, tente novamente mais tarde.', 'error');
                             setActiveStep(0);
                             return;
                         default: 
@@ -1045,14 +1058,14 @@ const UserRegistration = (props) => {
 
                         </Grid>
                             
-                        <Grid item xs={12} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0px' }}> {/* Buttons */}
+                        <Grid item xs={12} style={{ display: 'flex', overflow: 'auto', justifyContent: 'space-between', padding: '8px 0px' }}> {/* Buttons */}
 
                             {
                                 activeStep === steps.length ?
-                                    // null
-                                    <div>
-                                        <Button onClick={handleBack}>Voltar</Button>
-                                    </div>
+                                    null
+                                    // <div>
+                                    //     <Button onClick={handleBack}>Voltar</Button>
+                                    // </div>
                                 : 
                                     <>
                                     <Button 
@@ -1061,7 +1074,7 @@ const UserRegistration = (props) => {
                                         variant='contained'
                                         color='primary'
                                         size='small'
-                                        style={{ marginRight: '8px' }} 
+                                        
                                     >
                                         { activeStep === 0 ? 'Desistir' : 'Voltar'}
                                     </Button>

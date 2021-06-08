@@ -2,7 +2,7 @@
 import PropTypes from 'prop-types';
 
 // Utilidades.
-import { makeStyles, useTheme } 
+import { makeStyles } 
     from '@material-ui/core/styles';
 
 // Actions.
