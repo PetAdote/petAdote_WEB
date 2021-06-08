@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
         [theme.breakpoints.up('sm')]: {
             width: `calc(100% - ${drawerWidth}px)`,
             marginLeft: drawerWidth,
-            // display: 'none'
+            display: 'none'
         },
         background: 'linear-gradient(rgba(63, 81, 181, 0.85), rgba(63, 81, 181, 0.85))'
     },
@@ -231,7 +231,7 @@ function ResponsiveDrawer(props) {
                     <Grid container component='div' spacing={1} >
 
                         <Grid item xs={4} style={{ textAlign: 'center' }}> {/* Avatar */}
-                            <IconButton style={{padding: '0px'}} onClick={ () => { console.log('Ir para a página dos dados do usuário.')}}>
+                            <IconButton style={{padding: '0px'}} onClick={ () => { history.push(`/user/${user?.cod_usuario}`) } }>
                                 <UserAvatar user={user} width='80px' height='80px' showOngBadge showUserTypeBadge />
                             </IconButton>
                         </Grid>

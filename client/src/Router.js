@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom';
         import HomeContainer from './pages/HomeContainer';
         import LoginContainer from './pages/LoginContainer';
         import UserRegistration from './pages/UserRegistrationContainer';
+        import UserProfileContainer from './pages/UserProfileContainer';
         // import NotFoundContainer from './pages/NotFoundContainer';
 
 const myRoutes = () => (
@@ -18,6 +19,10 @@ const myRoutes = () => (
         
         <Route path="/cadastro">
             <UserRegistration />
+        </Route>
+
+        <Route exact path="/user/:id">
+            <UserProfileContainer />
         </Route>
 
         <Route path="*">

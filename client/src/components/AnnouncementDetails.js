@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 // Utilidades.
 import axios from '../helpers/axiosInstance';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { makeStyles }
     from '@material-ui/core/styles';
 
@@ -91,6 +91,8 @@ const AnnouncementDetails = (props) => {
 
     const styles = useStyles();
     const theme = useTheme();
+
+    const history = useHistory();
 
     const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
     const isAtMinViewPort = useMediaQuery(theme.breakpoints.down('xs'));
@@ -188,7 +190,7 @@ const AnnouncementDetails = (props) => {
                     <DialogTitle style={{ padding: '8px' }} id="simple-dialog-title">
                         <Grid container alignItems='center'>
                             <Grid item xs={3} sm={2} style={{ textAlign: 'center'}}>
-                                <IconButton size='small' onClick={() => { console.log('Ir para o perfil do anunciante.') }} >
+                                <IconButton size='small' onClick={() => { history.push(`/user/${announcementDetails.anunciante.cod_usuario}`) }} >
                                     <UserAvatar
                                         user={announcementDetails.anunciante}
                                         width='50px'
