@@ -268,7 +268,7 @@ const AnnouncementDetails = (props) => {
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
-                                                {/* Início - Ícones do anúncio */}
+                                                {/* Fim - Ícones do anúncio */}
                                                 
                                             </Grid>
                                             <Grid item xs={12} style={{ whiteSpace: 'nowrap', overflow: 'auto', minHeight: '42px', margin: '4px 0' }}>

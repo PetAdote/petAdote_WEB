@@ -1,16 +1,17 @@
 // Importações.
 import PropTypes from 'prop-types'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 // Utilidades.
 import axios from '../helpers/axiosInstance';
+import usePetListSearch from '../hooks/usePetListSearch';
 // import { makeStyles } from '@material-ui/core/styles';
 
 // Actions.
 
 // Components.
-import { Grid }
+import { Grid, CircularProgress }
     from '@material-ui/core';
 
 // import { Search }
@@ -25,58 +26,38 @@ import UserPetListBox from '../components/UserPetListBox';
 const UserPetListContainer = (props) => {
 
     const { userId: petListOwnerId } = props;
+    const { pets } = props.petsData;
 
-    const petListInitialState = {
-        petListOwnerId: petListOwnerId,
-        isLoading: false,
-        petList: null,
-        hasMore: false,
-        filters: null,
-        defaultPage: 1,
-        defaultLimit: 1,
-        error: ''
-    };
-
-    const [petListState, setPetListState] = useState(petListInitialState);
-
-    // const defaultPage = 1;
-    // const defaultLimit = 1;
-    
-    const fetchPetList = (filters, page, limit) => {
-        setPetListState({ ...petListState, isLoading: true });
-
-        axios.get(`/usuarios/animais/?getAllFromUser=${petListOwnerId}${filters || ''}&page=${page || petListState.defaultPage}&limit=${limit || petListState.defaultLimit}`)
-        .then((response) => {
-
-            setPetListState({ ...petListState, isLoading: false });
-
-            if (response.data.animais){
-                console.log('A lista de animais do usuário foi recebida.');
-                return setPetListState({ ...petListState, petList: response.data.animais });
-            }
-            
-            console.log('Dados recebidos:', response);
-        })
-        .catch((error) => {
-            setPetListState({ ...petListState, isLoading: false });
-            console.log('Erro recebido:', error?.response?.data || error?.message || 'UNKNOWN_ERROR');
-        });
+    const filtersInitialState = {
+        especie: undefined,
+        estadoAdocao: undefined,
+        nomePet: undefined
     }
+    const [filters, setFilters] = useState(filtersInitialState);
+    const [pageToFetch, setPageToFetch] = useState(1);
+
+    useEffect(()=>{
+        if (!pets) {
+            setPageToFetch(1);
+        }
+    }, [pets])
+    
 
     return (
         <Grid container>
             <UserPetListSearchBar
-                petListState={petListState}
-                setPetListState={setPetListState}
-                fetchPetList={fetchPetList}
+                filters={filters}
+                setFilters={setFilters}
+                setPageToFetch={setPageToFetch}
             />
 
-            <UserPetListBox
-                // petListState={petListState}
-                filters={petListState.filters}
-                petList={petListState.petList}
-                fetchPetList={fetchPetList}
+            <UserPetListBox 
+                petListOwnerId={petListOwnerId}
+                filters={filters}
+                pageToFetch={pageToFetch}
+                setPageToFetch={setPageToFetch}
             />
+
         </Grid>
     );
 }
@@ -89,6 +70,7 @@ UserPetListContainer.propTypes = {
 // Redux Store Mapping.
 const mapStateToProps = (state) => {
     return {
+        petsData: state.pets
         // userData: state.user
     }
 }

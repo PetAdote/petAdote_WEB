@@ -1,5 +1,5 @@
 // Importações.
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types'
 
@@ -8,7 +8,7 @@ import axios from '../helpers/axiosInstance';
 import { makeStyles } from '@material-ui/core/styles';
 
 // Actions.
-import { openSnackbar } 
+import { openSnackbar, fetchPets } 
     from '../redux/actions'
 
 // Components.
@@ -20,11 +20,31 @@ import { useTheme, useMediaQuery,
 import {  }
     from '@material-ui/icons';
 
+import UserPetListBoxItem from './UserPetListBoxItem';
+
 // Inicializações.
+const petListBoxItemWidth = 320;
 const useStyles = makeStyles((theme) => {
     return {
         petListBox: {
-            padding: '8px'
+            margin: '0 auto',
+            padding: '8px',
+            // Responsividade da lista de pets.
+            [theme.breakpoints.down('xs')]: {
+                justifyContent: 'center',
+            },
+            [theme.breakpoints.only('sm')]: {
+                maxWidth: `${petListBoxItemWidth * 1}px`,
+            },
+            [theme.breakpoints.only('md')]: {
+                maxWidth: `${petListBoxItemWidth * 2}px`,
+            },
+            [theme.breakpoints.only('lg')]: {
+                maxWidth: `${petListBoxItemWidth * 4}px`,
+            },
+            [theme.breakpoints.up('xl')]: {
+                maxWidth: `${petListBoxItemWidth * 5}px`,
+            }
         }
     }
 });
@@ -32,57 +52,135 @@ const useStyles = makeStyles((theme) => {
 // Functional Component.
 const UserPetListBox = (props) => {
 
-    const { fetchPetList, filters, petList } = props;
+    const { petListOwnerId, fetchPets, openSnackbar, pageToFetch, setPageToFetch } = props;
+    const { loading, pets, hasMore } = props.petsData;
+    const { especie, estadoAdocao, nomePet } = props.filters;
 
     const fetchLimit = 1;
-    const [pageToFetch, setPageToFetch] = useState(1);
+    // const [pageToFetch, setPageToFetch] = useState(1);
 
-    const styles = useStyles();
-    const theme = useTheme();
-    const isDownXs = useMediaQuery(theme.breakpoints.down('xs'));   // Display Mobile?
+    // Sistema de Paginação com Scrolling Infinito. (Detalhes da implementação em [AnnouncementsList.js])
+    const observer = useRef();
 
-    useEffect(() => {
-        
-        if (!filters && !petList){
-            // Para preencher esse componente com os dados necessários.
-            // A função é executada apenas uma vez no estado inicial, filtros não configurados e lista de pets vazia.
-            fetchPetList();
+    const lastElement = useCallback((node) => {
+
+        if (loading) { return }
+
+        if (observer.current) {
+            observer.current.disconnect();
         }
 
-        console.log(petList)
-        
-    }, [filters, petList, fetchPetList]);
+        observer.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && hasMore){
+                setPageToFetch(pageToFetch + 1);
+                fetchPets({
+                    ownerId: petListOwnerId,
+                    filters: {
+                        bySpecie: especie,
+                        byStatus: estadoAdocao,
+                        byName: nomePet
+                    },
+                    page: pageToFetch,
+                    limit: fetchLimit
+                });
+            }
+
+            if (entries[0].isIntersecting && !hasMore){
+                openSnackbar('Fim da lista de pets.', 'info');
+            }
+
+        });
+
+        if (node) {
+            observer.current.observe(node);
+        }
+
+    }, [
+        petListOwnerId, loading, hasMore, 
+        fetchPets, openSnackbar, pageToFetch,
+        especie, estadoAdocao, nomePet, setPageToFetch
+    ]);
+    // Fim das configurações do sistema de paginação.
+
+    useEffect(() => {
+
+        if (!pets){
+            // setPageToFetch(1);
+            fetchPets({
+                ownerId: petListOwnerId,
+                filters: {
+                    bySpecie: especie,
+                    byStatus: estadoAdocao,
+                    byName: nomePet
+                },
+                page: pageToFetch,
+                limit: fetchLimit
+            });      
+        }
+
+    }, [
+        petListOwnerId, pets, fetchPets,
+        especie, estadoAdocao, nomePet,
+        pageToFetch, fetchLimit
+    ]);
+
+    const styles = useStyles();
+    // const theme = useTheme();
+    // const isDownXs = useMediaQuery(theme.breakpoints.down('xs'));   // Display Mobile?
 
     return (
-        <>
-            <Grid item xs={12}>     {/* Início - Pet List Box */}
+        <Grid item xs={12}>     {/* Início - Pet List Box */}
+            <Grid container className={styles.petListBox}>
+
                 {
-                    petList?.length > 0 ?
-                    <Grid container className={styles.petListBox}>
-                        <Button onClick={() => { fetchPetList(filters, pageToFetch, fetchLimit) }}>Click Me</Button>
-                    </Grid>
+                    pets ?
+                        pets.map((pet, index) => {
+
+                            if ( pets.length === index + 1){
+                                return (
+                                    <Grow key={pet.cod_animal} ref={lastElement} in timeout={1000}>
+                                        <div>
+                                            <UserPetListBoxItem pet={pet} />
+                                        </div>
+                                    </Grow>
+                                );
+                            }
+
+                            return (
+                                <Grow key={pet.cod_animal} in timeout={1000}>
+                                    <div>
+                                        <UserPetListBoxItem pet={pet} />
+                                    </div>
+                                </Grow>
+                            );
+
+                        })
                     : null
                 }
-            </Grid>     {/* Fim - Pet List Box */}
-        </>
+
+            </Grid>
+        </Grid> /* Fim - Pet List Box */
     );
 }
 
 // Documentação das Props.
 UserPetListBox.propTypes = {
-    petListState: PropTypes.object,
-    fetchPetList: PropTypes.func
+    petListOwnerId: PropTypes.any.isRequired,
+    filters: PropTypes.object.isRequired,
+    pageToFetch: PropTypes.number.isRequired,
+    setPageToFetch: PropTypes.func.isRequired
 }
 
 // Redux Store Mapping.
 const mapStateToProps = (state) => {
     return {
-        // userData: state.user
+        petsData: state.pets
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        fetchPets: (configs) => { return dispatch( fetchPets(configs) ) },
         openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) }
     }
 }

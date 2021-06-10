@@ -1,11 +1,14 @@
 // Importações.
 import { useState } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types'
 
 // Utilidades.
 import { makeStyles } from '@material-ui/core/styles';
 
 // Actions.
+import { clearPets }
+    from '../redux/actions';
 
 // Components.
 import { useTheme, useMediaQuery, 
@@ -35,7 +38,8 @@ const useStyles = makeStyles((theme) => {
 // Functional Component.
 const UserPetListSearchBar = (props) => {
 
-    const { petListState, setPetListState, fetchPetList } = props;
+    const { filters, setFilters, setPageToFetch } = props;
+    const { clearPets } = props;
 
     const especies = [
         { value: "DEFAULT", label: "Espécie" },
@@ -65,39 +69,37 @@ const UserPetListSearchBar = (props) => {
     const isDownXs = useMediaQuery(theme.breakpoints.down('xs'));   // Display Mobile?
 
     const handleClickSearch = () => {
+
         const { especie, estadoAdocao, nomePet } = searchBarState;
 
-        let customFilters = '';
+        let customFilters = {}
+        // let hasChanged = false;
         if (especie !== 'DEFAULT'){
-            customFilters += `&bySpecie=${especie}`
+            customFilters.especie = especie;
         }
         if (estadoAdocao !== 'DEFAULT'){
-            customFilters += `&byStatus=${estadoAdocao}`
+            customFilters.estadoAdocao = estadoAdocao;
         }
         if (nomePet){
-            customFilters += `&byName=${nomePet}`
+            customFilters.nomePet = nomePet;
         }
 
         console.log('SearchBar State:', searchBarState);
-        if (customFilters) { console.log('Changing Filters:', customFilters) }
+        if (customFilters) { 
 
-        // Reinicia a PetList.
-        // setPetListState({
-        //     ...petListState,
-        //     petList: null 
-        // });
+            console.log('Changing Filters:', customFilters)
 
-        // Realiza a primeira busca com os filtros.
-        fetchPetList(customFilters);    
-            // Deve passar os custom filters a partir dessa chamada.
-            // A referência da função recebe o estado iniciado em [userPetListContainer]
-            // E nesse momento não possuirá como filtros os filtros da state.
-            // Mesmo se modificarmos a state primeiro e chamarmos a função fetchPetList() depois.
+            clearPets();
+            setPageToFetch(1);
+            return setFilters({
+                ...filters,
+                especie: customFilters.especie,
+                estadoAdocao: customFilters.estadoAdocao,
+                nomePet: customFilters.nomePet,
+            });
+            
+        }
 
-        return setPetListState({
-            ...petListState,
-            filters: customFilters
-        });
     }
 
     return (
@@ -205,9 +207,27 @@ const UserPetListSearchBar = (props) => {
 
 // Documentação das Props.
 UserPetListSearchBar.propTypes = {
-    petListState: PropTypes.object.isRequired,
-    setPetListState: PropTypes.func.isRequired
+    filters: PropTypes.object.isRequired,
+    setFilters: PropTypes.func.isRequired,
+    setPageToFetch: PropTypes.func.isRequired
+}
+
+// Redux Store Mapping.
+const mapStateToProps = (state) => {
+    return {
+        // userData: state.user
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        clearPets: () => { return dispatch ( clearPets() ) },
+        // openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) }
+    }
 }
 
 // Exportações.
-export default UserPetListSearchBar;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(UserPetListSearchBar);

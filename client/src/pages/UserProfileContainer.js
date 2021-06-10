@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import axios from '../helpers/axiosInstance';
 
 // Actions.
-import {  }
+import { clearPets }
     from '../redux/actions';
 
 // Components.
@@ -77,6 +77,7 @@ const UserProfileContainer = (props) => {
     const { id: profileOwnerId } = useParams();
     
     const { user } = props.userData;
+    const { clearPets } = props;
 
     const [isLoading, setIsLoading] = useState(true);
     const [profileOwnerData, setProfileOwnerData] = useState(null);
@@ -140,7 +141,11 @@ const UserProfileContainer = (props) => {
 
         });
 
-    }, [profileOwnerId]);
+        return () => {
+            clearPets();
+        }
+
+    }, [profileOwnerId, clearPets]);
 
     const handleContentTabChange = (ev, newValue) => {
         setTabValue(newValue)
@@ -310,6 +315,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        clearPets: () => { dispatch( clearPets() ) }
         // openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) }
     }
 }
