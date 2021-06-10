@@ -56,7 +56,7 @@ axios.get('/auth/refresh', {
 
         if (window.location.pathname !== '/login'){     
             store.dispatch( clearUser() );  // Se qualquer um dos casos acima aconteceu, reinicie a State "user".
-            window.location.replace('/login');  // Redirecione-o para "/login".
+            // window.location.replace('/login');  // Redirecione-o para "/login".
         }
         
         return console.log('O usuário não tem uma autenticação iniciada.');

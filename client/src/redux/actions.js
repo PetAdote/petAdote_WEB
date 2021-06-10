@@ -2,3 +2,4 @@
 export * from './user/userActions';
 export * from './snackbar/snackActions';
 export * from './announcements/announcementsActions';
+export * from './pets/petsActions';

@@ -82,14 +82,14 @@ const useStyles = makeStyles((theme) => {
 });
 
 // Functional Component.
-const AnnouncementDetails = (props) => {
+const UserPetListBoxItemDetails = (props) => {
 
-    const { userData, open, closeDetails, itemId: announcementId } = props;
+    const { userData, open, closeDetails, itemId: petId } = props;
 
-    const [announcementDetails, setAnnouncementDetails] = useState(null);
+    const [petDetails, setPetDetails] = useState(null);
     const [adoptionDocs, setAdoptionDocs] = useState(null);
 
-    const styles = useStyles();
+    const styles= useStyles();
     const theme = useTheme();
 
     const history = useHistory();
@@ -118,15 +118,6 @@ const AnnouncementDetails = (props) => {
                 window.open(url);   // Abre uma nova aba contendo os termos de responsabilidade do usuário.
                 window.URL.revokeObjectURL(file);
 
-                // console.log(url);
-                // const link = document.createElement('a');
-                // link.href = url;
-                // // link.setAttribute('download', 'file.pdf');
-                // document.body.appendChild(link);
-                // link.click();
-                // document.body.removeChild(link);
-                // console.log(response.data);
-                // return response.data;
             })
             .catch((error) => {
                 console.log('handleDocsError:', error);
@@ -134,34 +125,42 @@ const AnnouncementDetails = (props) => {
         } else {
             return
         }
-        
+
     }
 
     const handleEntering = () => {
 
-        axios.get(`/anuncios/?getOne=${announcementId}`)
+        axios.get(`/usuarios/animais/?getOne=${petId}`)
         .then((response) => {
             if (response.data){
 
-                setAnnouncementDetails(response.data);
+                setPetDetails(response.data);
 
-                axios.get(`/anuncios/candidaturas/documentos/?fromAnnouncement=${response.data.anuncio.cod_anuncio}`)
-                .then((response) => {
-                    if (response.data.download_documento){
-                        setAdoptionDocs(response.data.download_documento.split(' ')[1]);
-                    }
-                })
-                .catch((error) => {
-                    if (error.response.status === 404){
-                        return
-                    }
-                    return console.log('[AnnouncementDetails.js/handleEntering]: ', error.response?.data?.mensagem || error?.message || 'UNKNOWN');
-                });
+                const anuncio = response.data.animal?.anuncio;
 
+                if (anuncio){
+
+                    // A chamada verificará se o usuário requisitante (autenticado no momento) possui algum documento
+                    // vínculado ao anúncio que esse animal possui.
+                    axios.get(`/anuncios/candidaturas/documentos/?fromAnnouncement=${anuncio.cod_anuncio}`)
+                    .then((response) => {
+                        if (response.data.download_documento){
+                            setAdoptionDocs(response.data.download_documento.split(' ')[1]);
+                        }
+                    })
+                    .catch((error) => {
+                        if (error.response.status === 404){
+                            return
+                        }
+                        return console.log('[UserPetListBoxItemDetails.js/handleEntering]: ', error.response?.data?.mensagem || error?.message || 'UNKNOWN');
+                    });
+
+                }
+                
             }
         })
         .catch((error) => {
-            console.log('[AnnouncementDetails.js/handleEntering]: ', error.response?.data?.mensagem || error?.message || 'UNKNOWN');
+            console.log('[UserPetListBoxItemDetails.js/handleEntering]: ', error.response?.data?.mensagem || error?.message || 'UNKNOWN');
         });
 
     }
@@ -185,49 +184,39 @@ const AnnouncementDetails = (props) => {
             }}
         >
             {
-                announcementDetails ?
+                petDetails ?
                     <>
                     <DialogTitle style={{ padding: '8px' }} id="simple-dialog-title">
-                        <Grid container alignItems='center'>
-                            <Grid item xs={3} sm={2} style={{ textAlign: 'center'}}>
-                                <IconButton size='small' onClick={() => { history.push(`/user/${announcementDetails.anunciante.cod_usuario}`) }} >
-                                    <UserAvatar
-                                        user={announcementDetails.anunciante}
-                                        width='50px'
-                                        height='50px'
-                                        badgesWidth='15px'
-                                        badgesHeight='15px'
-                                        showOngBadge
-                                    />
-                                </IconButton>
-                            </Grid>
-                            <Grid item xs={8} sm={9}>
+                        <Grid container justify='space-between' alignItems='center'>
+
+                            <Grid item xs={11} sm={9}>
                                 <Grid container>
                                     <Grid item xs={12} style={{ overflow: 'auto', whiteSpace: 'nowrap' }}>
-                                        <Typography component='h1' variant='h6'>{announcementDetails.animal.nome} </Typography>
-                                    </Grid>
-                                    <Grid item xs={12} style={{ overflow: 'auto', whiteSpace: 'nowrap' }}>
-                                        <Typography component='h2' variant='subtitle2' style={{ color: 'dimgrey' }}>Dono: {announcementDetails.anunciante.primeiro_nome + ' ' + announcementDetails.anunciante.sobrenome}</Typography>
+                                        <Typography component='h1' variant='h6'>{petDetails.animal.nome} </Typography>
                                     </Grid>
                                 </Grid>
                             </Grid>
+
                             <Grid item xs={1}>
                                 <IconButton size='small' onClick={() => { handleClose('Sair') }} >
                                     <Close style={{ padding: '4px' }} />
                                 </IconButton>
                             </Grid>
+
                         </Grid>
                     </DialogTitle>
 
                     <DialogContent style={{ padding: '8px' }} dividers>
                         <Grid container>
+                            
                             <Grid item xs={12} sm={6} style={{ padding: '8px' }}>
                                 <Grid container>
+
                                     <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', maxHeight: '220px', padding: '10px', paddingTop: '0px' }}>
                                         <div
-                                            title={`Foto ${announcementDetails.animal.nome}`}
+                                            title={`Foto ${petDetails.animal.nome}`}
                                             style={{
-                                                background: `url("${announcementDetails.anuncio.download_foto.split(' ')[1]}")`,
+                                                background: `url("${petDetails.animal.download_foto}")`,
                                                 backgroundSize: 'contain',
                                                 width: '200px',
                                                 height: '200px',
@@ -236,58 +225,80 @@ const AnnouncementDetails = (props) => {
                                             }}
                                         ></div>
                                     </Grid>
+
                                     <Grid item xs={12}>
                                         <Divider />
                                     </Grid>
+                                    
                                     <Grid item xs={12} style={{ minHeight: '100px', maxHeight: '100px', overflow: 'auto' }}>
                                         
-                                        <Grid container>
-                                            <Grid item xs={12} style={{ whiteSpace: 'nowrap', overflow: 'auto', margin: '4px 0' }}>
-                                                
-                                                {/* Início - Ícones do anúncio */}
-                                                <Grid container wrap='nowrap' className={styles.infoIconsContainer}>
+                                        <Grid container alignItems='center'>
+                                            {
+                                                petDetails.animal.anuncio ?
+                                                <>
+                                                    <Grid item xs={12} style={{ whiteSpace: 'nowrap', overflow: 'auto', margin: '4px 0' }}>
+                                                        
+                                                        {/* Início - Ícones do anúncio, caso o pet esteja anúnciado. */}
+                                                        <Grid container wrap='nowrap' className={styles.infoIconsContainer}>
 
-                                                    <Grid item xs={3} title={`Avaliações: ${announcementDetails.anuncio.qtd_avaliacoes}`} className={styles.baseIcons}>
-                                                        <ThumbUp className={styles.baseIconsColor} />
-                                                        <Typography component='span' className={styles.baseIconsTypography}>
-                                                            {announcementDetails.anuncio.qtd_avaliacoes}
-                                                        </Typography>
-                                                    </Grid>
+                                                            <Grid item xs={3} title={`Avaliações: ${petDetails.animal.anuncio.qtd_avaliacoes}`} className={styles.baseIcons}>
+                                                                <ThumbUp className={styles.baseIconsColor} />
+                                                                <Typography component='span' className={styles.baseIconsTypography}>
+                                                                    {petDetails.animal.anuncio.qtd_avaliacoes}
+                                                                </Typography>
+                                                            </Grid>
 
-                                                    <Grid item xs={3} title={`Visualizações: ${announcementDetails.anuncio.qtd_visualizacoes}`} className={styles.baseIcons}>
-                                                        <Visibility className={styles.baseIconsColor} />
-                                                        <Typography component='span' className={styles.baseIconsTypography}>
-                                                            {announcementDetails.anuncio.qtd_visualizacoes}
-                                                        </Typography>
-                                                    </Grid>
+                                                            <Grid item xs={3} title={`Visualizações: ${petDetails.animal.anuncio.qtd_visualizacoes}`} className={styles.baseIcons}>
+                                                                <Visibility className={styles.baseIconsColor} />
+                                                                <Typography component='span' className={styles.baseIconsTypography}>
+                                                                    {petDetails.animal.anuncio.qtd_visualizacoes}
+                                                                </Typography>
+                                                            </Grid>
 
-                                                    <Grid item xs={3} title={`Candidaturas: ${announcementDetails.anuncio.qtd_candidaturas}`} className={styles.baseIcons}>
-                                                        <Inbox className={styles.baseIconsColor} />
-                                                        <Typography component='span' className={styles.baseIconsTypography}>
-                                                            {announcementDetails.anuncio.qtd_candidaturas}
-                                                        </Typography>
+                                                            <Grid item xs={3} title={`Candidaturas: ${petDetails.animal.anuncio.qtd_candidaturas}`} className={styles.baseIcons}>
+                                                                <Inbox className={styles.baseIconsColor} />
+                                                                <Typography component='span' className={styles.baseIconsTypography}>
+                                                                    {petDetails.animal.anuncio.qtd_candidaturas}
+                                                                </Typography>
+                                                            </Grid>
+                                                        </Grid>
+                                                        {/* Fim - Ícones do anúncio, caso o pet esteja anúnciado */}
+                                                        
                                                     </Grid>
-                                                </Grid>
-                                                {/* Fim - Ícones do anúncio */}
-                                                
-                                            </Grid>
+                                                </>
+                                                : null
+                                            }
+
                                             <Grid item xs={12} style={{ whiteSpace: 'nowrap', overflow: 'auto', minHeight: '42px', margin: '4px 0' }}>
                                                 <Typography component='h2' align='center' style={{ fontWeight: 'bold' }}>
                                                     Estado de adoção
                                                 </Typography>
                                                 <Typography component='p' variant='caption' align='center' style={{ color: 'dimgrey' }}>
                                                     {
-                                                        announcementDetails.animal.estado_adocao === 'Em anuncio' ?
+                                                        petDetails.animal.estado_adocao === 'Sob protecao' ?
+                                                            'Obrigado por cuidar de mim!'
+                                                        : null
+                                                    }
+                                                    {
+                                                        petDetails.animal.estado_adocao === 'Em anuncio' ?
                                                             'Adote-me!'
-                                                        :
-                                                        announcementDetails.animal.estado_adocao === 'Em processo adotivo' ?
-                                                          'Alguém se interessou em me adotar!'
-                                                        : ''
+                                                        : null
+                                                    }
+                                                    {
+                                                        petDetails.animal.estado_adocao === 'Em processo adotivo' ?
+                                                        'Alguém se interessou em me adotar!'
+                                                        : null
+                                                    }
+                                                    {
+                                                        petDetails.animal.estado_adocao === 'Adotado' ?
+                                                            'Fui adotado! Obrigado por ter cuidado de mim!'
+                                                        : null
                                                     }
                                                 </Typography>
                                             </Grid>
                                         </Grid>
                                     </Grid>
+                                        
 
                                     <Grid item xs={12}>
                                         <Divider />
@@ -304,56 +315,25 @@ const AnnouncementDetails = (props) => {
                                                 <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
 
                                                     {
-                                                        userData.user.cod_usuario === announcementDetails.anunciante.cod_usuario ?
+                                                        userData.user.cod_usuario === petDetails.animal.cod_dono ?
                                                         <>
-                                                            <ListItem component='button' button key='btn_checkCandidatures' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
-                                                                <ListItemIcon><Inbox fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Ver candidaturas</Typography>}
-                                                                />
-                                                            </ListItem>
-
-                                                            <ListItem component='button' button key='btn_rmvAnuncio' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                                            <ListItem component='button' button key='btn_rmvPet' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
                                                                 <ListItemIcon><NotInterested fontSize='small' /></ListItemIcon>
                                                                 <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Remover anúncio</Typography>}
+                                                                    primary={<Typography noWrap variant='button'>Remover Pet</Typography>}
                                                                 />
                                                             </ListItem>
                                                         </>
-                                                        : 
-                                                        <>
-                                                            {
-                                                                !announcementDetails.candidatura ?
-                                                                <ListItem component='button' button key='btn_apply' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                                    <ListItemIcon>
-                                                                        <MdiSvgIcon 
-                                                                            path={mdiCat}
-                                                                            size={1.0}
-                                                                            color="dimgrey"
-                                                                        />
-                                                                    </ListItemIcon>
-                                                                    <ListItemText
-                                                                        primary={<Typography noWrap variant='button'>Iniciar candidatura</Typography>}
-                                                                    />
-                                                                </ListItem>
-                                                                : null
-                                                            }
-
-                                                            {/* <ListItem component='button' button key='btn_addFav' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                                <ListItemIcon><FavoriteBorder fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Adicionar aos favoritos</Typography>}
-                                                                />
-                                                            </ListItem> */}
-
-                                                            <ListItem component='button' button key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                                <ListItemIcon><Email fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
-                                                                />
-                                                            </ListItem>
-                                                        </>
+                                                        : null
                                                     }
+
+                                                    <ListItem component='button' button key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
+                                                        <ListItemIcon><Email fontSize='small' /></ListItemIcon>
+                                                        <ListItemText
+                                                            primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
+                                                        />
+                                                    </ListItem>
+
                                                     {
                                                         adoptionDocs ?
                                                             <ListItem component='a' button key='btn_getDocs' onClick={handleDoc} classes={{ 'button': styles.menuBtns }}>
@@ -375,14 +355,38 @@ const AnnouncementDetails = (props) => {
                             <Grid item xs={12} sm={6} style={{ maxHeight: '485px', overflow: 'auto'}}>
 
                                 {
-                                    announcementDetails.candidatura ?
+                                    petDetails.animal.dono_antigo ?
                                     <>
-                                        <Typography component='h2' align='center' style={{ fontWeight: 'bold' }}>
-                                            Sua candidatura está
-                                        </Typography>
-                                            <Typography component='p' align='center' style={{ fontWeight: 'bold', color: 'dimgrey' }}>
-                                                {announcementDetails.candidatura.estado_candidatura}
-                                            </Typography>
+                                        <Grid container justify='center' alignItems='center'>
+
+                                            <Grid item xs={12}>
+
+                                                <Typography component='h2' align='center' style={{ fontWeight: 'bold' }}>
+                                                    Antigo dono
+                                                </Typography>
+
+                                            </Grid>
+
+                                            <Grid item xs={12} style={{ textAlign: 'center' }}>
+                                                <IconButton size='small' onClick={() => { history.push(`/user/${petDetails.animal.dono_antigo.cod_usuario}`) }} >
+                                                    <UserAvatar
+                                                        user={petDetails.animal.dono_antigo}
+                                                        width='50px'
+                                                        height='50px'
+                                                        badgesWidth='15px'
+                                                        badgesHeight='15px'
+                                                        showOngBadge
+                                                    />
+                                                </IconButton>
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Typography component='p' align='center' style={{ fontWeight: 'bold', color: 'dimgrey' }}>
+                                                    {petDetails.animal.dono_antigo.primeiro_nome} {petDetails.animal.dono_antigo.sobrenome}
+                                                </Typography>
+                                            </Grid>
+
+                                        </Grid>
 
                                         <Divider style={{ margin: '4px 0' }}/>
                                     </>
@@ -400,7 +404,7 @@ const AnnouncementDetails = (props) => {
                                             Espécie
                                         </Typography>
                                         <Typography component='p' align='center' style={{ overflow: 'auto', fontWeight: 'lighter', color: 'black' }}>
-                                            { announcementDetails.animal.especie === 'Cao' ? 'Cão' : announcementDetails.animal.especie }
+                                            { petDetails.animal.especie === 'Cao' ? 'Cão' : petDetails.animal.especie }
                                         </Typography>
                                     </Grid>
 
@@ -409,7 +413,7 @@ const AnnouncementDetails = (props) => {
                                             Raça
                                         </Typography>
                                         <Typography component='p' align='center' style={{ overflow: 'auto', fontWeight: 'lighter', color: 'black' }}>
-                                            { announcementDetails.animal.raca }
+                                            { petDetails.animal.raca }
                                         </Typography>
                                     </Grid>
 
@@ -418,7 +422,7 @@ const AnnouncementDetails = (props) => {
                                             Gênero
                                         </Typography>
                                         <Typography component='p' align='center' style={{ overflow: 'auto', fontWeight: 'lighter', color: 'black' }}>
-                                            { announcementDetails.animal.genero === 'M' ? 'Macho' : 'Fêmea' }
+                                            { petDetails.animal.genero === 'M' ? 'Macho' : 'Fêmea' }
                                         </Typography>
                                     </Grid>
 
@@ -427,9 +431,9 @@ const AnnouncementDetails = (props) => {
                                             Porte
                                         </Typography>
                                         <Typography component='p' align='center' style={{ overflow: 'auto', fontWeight: 'lighter', color: 'black' }}>
-                                            { announcementDetails.animal.porte === 'P' ? 'Pequeno' : null }
-                                            { announcementDetails.animal.porte === 'M' ? 'Médio' : null }
-                                            { announcementDetails.animal.porte === 'G' ? 'Grande' : null }
+                                            { petDetails.animal.porte === 'P' ? 'Pequeno' : null }
+                                            { petDetails.animal.porte === 'M' ? 'Médio' : null }
+                                            { petDetails.animal.porte === 'G' ? 'Grande' : null }
                                         </Typography>
                                     </Grid>
 
@@ -438,7 +442,7 @@ const AnnouncementDetails = (props) => {
                                             Castrado?
                                         </Typography>
                                         <Typography component='p' align='center' style={{ overflow: 'auto', fontWeight: 'lighter', color: 'black' }}>
-                                            { announcementDetails.animal.esta_castrado ? 'Sim' : 'Não' }
+                                            { petDetails.animal.esta_castrado ? 'Sim' : 'Não' }
                                         </Typography>
                                     </Grid>
 
@@ -447,7 +451,7 @@ const AnnouncementDetails = (props) => {
                                             Vacinado?
                                         </Typography>
                                         <Typography component='p' align='center' style={{ overflow: 'auto', fontWeight: 'lighter', color: 'black' }}>
-                                            { announcementDetails.animal.esta_vacinado ? 'Sim' : 'Não' }
+                                            { petDetails.animal.esta_vacinado ? 'Sim' : 'Não' }
                                         </Typography>
                                     </Grid>
 
@@ -456,7 +460,7 @@ const AnnouncementDetails = (props) => {
                                             Possui RGA?
                                         </Typography>
                                         <Typography component='p' align='center' style={{ overflow: 'auto', fontWeight: 'lighter', color: 'black' }}>
-                                            { announcementDetails.animal.possui_rga ? 'Sim' : 'Não' }
+                                            { petDetails.animal.possui_rga ? 'Sim' : 'Não' }
                                         </Typography>
                                     </Grid>
 
@@ -468,7 +472,7 @@ const AnnouncementDetails = (props) => {
                                     Saúde
                                 </Typography>
                                     <Typography component='p' style={{ fontWeight: 'lighter', color: 'black', margin: '4px 0' }}>
-                                        { announcementDetails.animal.detalhes_saude }
+                                        { petDetails.animal.detalhes_saude }
                                     </Typography>
 
                                 <Divider style={{ margin: '4px 0' }}/>
@@ -477,7 +481,7 @@ const AnnouncementDetails = (props) => {
                                     Comportamento
                                 </Typography>
                                     <Typography component='p' style={{ fontWeight: 'lighter', color: 'black', margin: '4px 0' }}>
-                                        { announcementDetails.animal.detalhes_comportamento }
+                                        { petDetails.animal.detalhes_comportamento }
                                     </Typography>
 
                                 <Divider style={{ margin: '4px 0' }}/>
@@ -486,7 +490,7 @@ const AnnouncementDetails = (props) => {
                                     História
                                 </Typography>
                                     <Typography component='p' style={{ fontWeight: 'lighter', color: 'black', margin: '4px 0' }}>
-                                        { announcementDetails.animal.historia }
+                                        { petDetails.animal.historia }
                                     </Typography>
 
                             </Grid>
@@ -503,56 +507,25 @@ const AnnouncementDetails = (props) => {
                                 <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
 
                                     {
-                                        userData.user.cod_usuario === announcementDetails.anunciante.cod_usuario ?
+                                        userData.user.cod_usuario === petDetails.animal.cod_dono ?
                                         <>
-                                            <ListItem component='button' button key='btn_checkCandidatures' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
-                                                <ListItemIcon><Inbox fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Ver candidaturas</Typography>}
-                                                />
-                                            </ListItem>
-
-                                            <ListItem component='button' button key='btn_rmvAnuncio' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                            <ListItem component='button' button key='btn_rmvPet' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
                                                 <ListItemIcon><NotInterested fontSize='small' /></ListItemIcon>
                                                 <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Remover anúncio</Typography>}
+                                                    primary={<Typography noWrap variant='button'>Remover Pet</Typography>}
                                                 />
                                             </ListItem>
                                         </>
-                                        : 
-                                        <>
-                                            {
-                                                !announcementDetails.candidatura ?
-                                                <ListItem component='button' button key='btn_apply' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                    <ListItemIcon>
-                                                        <MdiSvgIcon 
-                                                            path={mdiCat}
-                                                            size={1.0}
-                                                            color="dimgrey"
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        primary={<Typography noWrap variant='button'>Iniciar candidatura</Typography>}
-                                                    />
-                                                </ListItem>
-                                                : null
-                                            }
-
-                                            {/* <ListItem component='button' button key='btn_addFav' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                <ListItemIcon><FavoriteBorder fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Adicionar aos favoritos</Typography>}
-                                                />
-                                            </ListItem> */}
-
-                                            <ListItem component='button' button key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                <ListItemIcon><Email fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
-                                                />
-                                            </ListItem>
-                                        </>
+                                        : null
                                     }
+
+                                    <ListItem component='button' button key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
+                                        <ListItemIcon><Email fontSize='small' /></ListItemIcon>
+                                        <ListItemText
+                                            primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
+                                        />
+                                    </ListItem>
+
                                     {
                                         adoptionDocs ?
                                             <ListItem component='a' button key='btn_getDocs' onClick={handleDoc} classes={{ 'button': styles.menuBtns }}>
@@ -577,7 +550,6 @@ const AnnouncementDetails = (props) => {
     );
 }
 
-
 // Redux Store Mapping.
 const mapStateToProps = (state) => {
     return {
@@ -596,4 +568,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(AnnouncementDetails);
+)(UserPetListBoxItemDetails);

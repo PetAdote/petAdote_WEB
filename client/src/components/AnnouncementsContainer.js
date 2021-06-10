@@ -46,7 +46,16 @@ const AnnouncementsContainer = (props) => {
             announcementsContainer: {
                 margin: '0 auto',
                 padding: '8px 0',
-                marginTop: `${theme.mixins.toolbar.minHeight + 8}px`,   // Deve levar em consideração o AppBar.
+                // marginTop: `${theme.mixins.toolbar.minHeight + 8}px`,
+                [theme.breakpoints.down('xs')]: {
+                    marginTop: `${theme.mixins.toolbar.minHeight}px`,
+                },
+                [theme.breakpoints.between('455', '599')]: {
+                    marginTop: `${theme.mixins.toolbar.minHeight - 8}px`,
+                },
+                // [theme.breakpoints.only('sm')]: {
+                //     marginTop: `${theme.mixins.toolbar.minHeight + 8}px`,
+                // },
                 [theme.breakpoints.down('sm')]: {
                     justifyContent: 'center',
                 },

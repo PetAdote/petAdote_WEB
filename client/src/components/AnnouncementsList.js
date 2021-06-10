@@ -3,8 +3,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { connect } from 'react-redux';
 
 // Utilidades.
-import { makeStyles }
-    from '@material-ui/core/styles';
 
 // Actions.
 import { fetchAnnouncements, openSnackbar }
@@ -17,93 +15,6 @@ import { Grow }
 import AnnouncementsItem from '../components/AnnouncementsItem';
 
 // Inicializações.
-const useStyles = makeStyles((theme) => {
-    return { 
-        itemBox: {
-            border: '2px solid black',
-            borderRadius: '7px',
-            overflow: 'hidden',
-            boxSizing: 'content-box',
-            backgroundColor: 'whitesmoke',
-            minWidth: '300px',
-            maxWidth: '300px',
-            height: '300px',
-            margin:'4px',
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-            // backgroundAttachment: 'fixed',
-            backgroundPosition: 'center'
-        },
-        boxContentLayout: {
-            display: 'flex',
-            flexDirection: 'column',
-            height:'100%',
-            justifyContent:'space-between'
-        },
-        boxContentHeader: {
-            borderBottom: '2px solid black',
-            backgroundColor: 'rgba(225, 225, 225, 0.80)',
-            padding: '4px'
-        },
-        headerBadgeContainer: {
-            display: 'flex',
-            margin: 'auto 0',
-            justifyContent: 'center',
-            padding:'0 8px'
-        },
-        ongBadge: {
-            padding: '2px',
-            width: '24px',
-            height: '24px',
-            borderRadius: '50%', 
-            boxShadow: '0px 0px 5px rgba(0,0,0,0.5)',
-            color: 'green'
-        },
-        headerTextContainer: {
-            textAlign: 'left'
-        },
-        clickableImageArea: {
-            flex: '1'
-        },
-        fullHeight: {
-            height: '100%'
-        },
-        infoIconsContainer: {
-            borderTop: '2px solid black',
-            overflow: 'auto',
-            backgroundColor: 'rgba(225, 225, 225, 0.8)'
-        },
-        baseIcons: {
-            display: 'flex',
-            alignItems: 'center',
-            overflow: 'hidden',
-            padding: '4px',
-            // borderRight: '2px solid black'
-        },
-        baseIconsColor: {
-            color: 'dimgrey'
-        },
-        baseIconsTypography: {
-            fontFamily: 'monospace',
-            paddingLeft: '4px'
-        },
-        extraIconsContainer: {
-            display: 'flex',
-            flexDirection: 'row-reverse',
-            alignItems: 'center',
-            overflow: 'auto',
-            padding: '4px',
-            borderLeft: '0px solid black'
-        },
-        extraIcon: {
-            display: 'flex',
-            alignItems: 'center',
-            paddingLeft: '8px',
-            margin: '0'
-        }
-    }
-});
-
 
 // Functional Component.
 const AnnouncementsList = (props) => {
@@ -166,9 +77,6 @@ const AnnouncementsList = (props) => {
     // a ref "lastElement".
 
     // Fim do sistema de Scrolling Infinito.
-
-    
-    const styles = useStyles();
 
     return (
         <>

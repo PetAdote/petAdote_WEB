@@ -3,7 +3,6 @@ const { default: axios } = require('axios');
 
     // Utilidades para os Interceptors.
     const refreshClientTokens = require('./refreshClientTokens');
-    const refreshUserTokens = require('./refreshUserTokens_stash');
 
 // Configurações básicas.
 
@@ -88,7 +87,7 @@ const { default: axios } = require('axios');
 
         }
 
-        if (code === 'INVALID_AUTH_HEADER' || 'EXPIRED_AUTH_HEADER') {
+        if (code === 'INVALID_AUTH_HEADER' || code === 'EXPIRED_AUTH_HEADER') {
             console.error('[server_axiosInstance] AS AUTHs ENVIADAS APRESENTARAM PROBLEMAS!');
             console.log(code);
             console.error(error.message);

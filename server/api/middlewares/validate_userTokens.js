@@ -24,6 +24,12 @@ module.exports = async (req, res, next) => {
             return next();
         }
 
+        if (req.url === '/registration/'){ 
+            // Se o usuário está se autenticando... Vá adiante.
+            console.log('[validate_userTokens] O usuário está cadastrando uma nova conta.')
+            return next();
+        }
+
         return res.status(202).send('USER_REFRESH_NOT_FOUND'); // 202 - Accepted - A requisição foi aceita, podendo ou não ser processada. - Processamos com "USER_AUTH_NOT_FOUND".
     }
 
@@ -50,6 +56,7 @@ module.exports = async (req, res, next) => {
     if (!req.headers.authorization){
         // A requisição não apresentou os cabeçalhos de autorização com o access token mas o usuário possui um refresh token (httpOnly Cookie), ou seja, estava autenticado anteriormente. Renovando JWTs antes de continuar a requisição...
         console.log('\n[validate_userTokens] A requisição possui apenas um httpOnly Cookie apresentando o refresh token. Iniciando tentativa de renovação dos JWTs antes de continuar a requisição...');
+        console.log('[validate_userTokens] - Cookies?', req.cookies);
     }
 
     const refreshedTokens = await axios.post(`/autenticacoes/usuarios/refresh`, {
@@ -63,9 +70,13 @@ module.exports = async (req, res, next) => {
         if (response?.data){
             return response.data;   // Deverá conter os Tokens (Access/Refresh) do usuário.
         }
+        console.log('[validate_userTokens] userRefresh unexpected response:', reponse)
         return 'FAILED_TO_REFRESH_USER';
     })
     .catch((error) => {
+
+        console.log('[validate_userTokens] userRefresh error:', error.response?.data || error.message);
+
         if (error?.response?.data){
 
             if (error.response.data.code === 'INVALID_USER_REFRESH'){

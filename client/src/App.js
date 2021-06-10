@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => {
             flexDirection: 'column',
             width: '100%',
             minHeight: '100vh',
-            overflow: 'hidden'  // Garante que o conteúdo não vai extrapolar os limites da tela.
+            overflow: 'hidden',  // Garante que o conteúdo não vai extrapolar os limites da tela.
             // flex: 1,
             // height: "100vh",
             // padding: theme.spacing(3),

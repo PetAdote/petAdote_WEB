@@ -21,7 +21,7 @@ import { clearUser } from '../redux/actions'
 
     axiosInstance.interceptors.response.use(null, (error) => {
 
-        const { code } = error?.response?.data;
+        const code  = error?.response?.data?.code;
 
         console.log('Error axiosInstance Front-End:', error.response);
 
@@ -76,10 +76,15 @@ import { clearUser } from '../redux/actions'
             })
         }
 
-        if (error.response.data === 'FAILED_TO_REFRESH'){
+        // if (code === 'RESOURCE_NOT_FOUND'){
+        //     return console.log('[front-axiosInstance.js] resource not found:', error.response);
+        // }
+
+        if (error.response?.data === 'FAILED_TO_REFRESH'){
             console.log('Não foi possível renovar o acesso do usuário, talvez ele se autenticou em outra aplicação Pet Adote.');
             return Promise.reject( store.dispatch( clearUser() ) );
         }
+        
 
         // console.log('Front AxiosInstance - Erro inesperado:', error.response);
         return Promise.reject(error);

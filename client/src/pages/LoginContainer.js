@@ -246,7 +246,7 @@ const LoginContainer = (props) => {
                                         <Link to="" className={styles.link}>Esqueceu a senha?</Link>
                                     </Grid>
                                     <Grid item >
-                                        <Link to="" className={styles.link}>Quero me cadastrar</Link>
+                                        <Link to="/cadastro" className={styles.link}>Quero me cadastrar</Link>
                                     </Grid>
                                 </Grid>
                             </Grid>
