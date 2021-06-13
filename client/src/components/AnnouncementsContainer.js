@@ -50,7 +50,7 @@ const AnnouncementsContainer = (props) => {
                 [theme.breakpoints.down('xs')]: {
                     marginTop: `${theme.mixins.toolbar.minHeight}px`,
                 },
-                [theme.breakpoints.between('455', '599')]: {
+                [theme.breakpoints.between('455', '600')]: {
                     marginTop: `${theme.mixins.toolbar.minHeight - 8}px`,
                 },
                 // [theme.breakpoints.only('sm')]: {

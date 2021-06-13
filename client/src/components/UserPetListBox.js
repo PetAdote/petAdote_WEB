@@ -40,7 +40,7 @@ const useStyles = makeStyles((theme) => {
                 maxWidth: `${petListBoxItemWidth * 2}px`,
             },
             [theme.breakpoints.only('lg')]: {
-                maxWidth: `${petListBoxItemWidth * 4}px`,
+                maxWidth: `${petListBoxItemWidth * 3}px`,
             },
             [theme.breakpoints.up('xl')]: {
                 maxWidth: `${petListBoxItemWidth * 5}px`,

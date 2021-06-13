@@ -283,7 +283,7 @@ const UserProfileContainer = (props) => {
                     <Grid item xs={12}>
 
                         <TabPanel value={tabValue} index={0}>
-                            <UserPetListContainer userId={profileOwnerData.cod_usuario} />
+                            <UserPetListContainer userId={profileOwnerId} />
                         </TabPanel>
                         <TabPanel value={tabValue} index={1}>
                             <Typography component='h1' variant='h4'>ANÚNCIOS DO USUÁRIO</Typography>    
