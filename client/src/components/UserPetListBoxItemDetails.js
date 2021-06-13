@@ -368,7 +368,7 @@ const UserPetListBoxItemDetails = (props) => {
                                             </Grid>
 
                                             <Grid item xs={12} style={{ textAlign: 'center' }}>
-                                                <IconButton size='small' onClick={() => { history.push(`/user/${petDetails.animal.dono_antigo.cod_usuario}`) }} >
+                                                <IconButton size='small' onClick={() => { history.push(`/usuario/${petDetails.animal.dono_antigo.cod_usuario}`) }} >
                                                     <UserAvatar
                                                         user={petDetails.animal.dono_antigo}
                                                         width='50px'

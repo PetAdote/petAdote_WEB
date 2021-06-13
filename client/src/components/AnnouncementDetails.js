@@ -190,7 +190,7 @@ const AnnouncementDetails = (props) => {
                     <DialogTitle style={{ padding: '8px' }} id="simple-dialog-title">
                         <Grid container alignItems='center'>
                             <Grid item xs={3} sm={2} style={{ textAlign: 'center'}}>
-                                <IconButton size='small' onClick={() => { history.push(`/user/${announcementDetails.anunciante.cod_usuario}`) }} >
+                                <IconButton size='small' onClick={() => { history.push(`/usuario/${announcementDetails.anunciante.cod_usuario}`) }} >
                                     <UserAvatar
                                         user={announcementDetails.anunciante}
                                         width='50px'

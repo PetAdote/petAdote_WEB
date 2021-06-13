@@ -2,9 +2,12 @@ import { Switch, Route } from 'react-router-dom';
 
     // Componentes.
         import HomeContainer from './pages/HomeContainer';
+
         import LoginContainer from './pages/LoginContainer';
-        import UserRegistration from './pages/UserRegistrationContainer';
+        import UserRegistrationContainer from './pages/UserRegistrationContainer';
+
         import UserProfileContainer from './pages/UserProfileContainer';
+        import UserAccDetailsPage from './pages/UserAccDetailsPage';
         // import NotFoundContainer from './pages/NotFoundContainer';
 
 const myRoutes = () => (
@@ -18,11 +21,15 @@ const myRoutes = () => (
         </Route>
         
         <Route path="/cadastro">
-            <UserRegistration />
+            <UserRegistrationContainer />
         </Route>
 
-        <Route exact path="/user/:id">
+        <Route exact path="/usuario/:id">
             <UserProfileContainer />
+        </Route>
+
+        <Route exact path="/usuario/:id/detalhes">
+            <UserAccDetailsPage />
         </Route>
 
         <Route path="*">

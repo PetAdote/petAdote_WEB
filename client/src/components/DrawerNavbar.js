@@ -17,6 +17,11 @@ import { Mail, Pets, Notifications, Home, Ballot, Inbox, Description, AccountCir
          Info, ExitToApp, Close }
     from '@material-ui/icons'
 
+import MdiSvgIcon from '@mdi/react';
+
+import { mdiCardAccountDetails }
+    from '@mdi/js';
+
 import UserAvatar from './UserAvatar';
 
 // Actions.
@@ -231,7 +236,7 @@ function ResponsiveDrawer(props) {
                     <Grid container component='div' spacing={1} >
 
                         <Grid item xs={4} style={{ textAlign: 'center' }}> {/* Avatar */}
-                            <IconButton style={{padding: '0px'}} onClick={ () => { history.push(`/user/${user?.cod_usuario}`) } }>
+                            <IconButton style={{padding: '0px'}} onClick={ () => { history.push(`/usuario/${user?.cod_usuario}`) } }>
                                 <UserAvatar user={user} width='80px' height='80px' showOngBadge showUserTypeBadge />
                             </IconButton>
                         </Grid>
@@ -344,7 +349,7 @@ function ResponsiveDrawer(props) {
             <List style={{ overflow: 'hidden' }}>  {/* Início - Drawer Menu */}
 
                 {/* <Link to='/' className={styles.link}> */}
-                    <ListItem component={Link} to='/' button className={styles.drawerMenuListItem} onClick={handleDrawerClose} key='menu_home' >
+                    <ListItem key='menu_home' button component={Link} to='/' className={styles.drawerMenuListItem} onClick={handleDrawerClose} >
                             <ListItemIcon><Home /></ListItemIcon>
                             <ListItemText 
                                 primary={<Typography noWrap>Início</Typography>}
@@ -352,49 +357,62 @@ function ResponsiveDrawer(props) {
                     </ListItem>
                 {/* </Link> */}
 
-                <ListItem component='button' button onClick={ () => { console.log('Exibir minha lista de pets.') } } className={styles.drawerMenuListItem} key='menu_myPets'>
+                {/* <ListItem key='menu_myPets' component='button' button onClick={ () => { console.log('Exibir minha lista de pets.') } } className={styles.drawerMenuListItem} >
                     <ListItemIcon><Pets /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Meus pets</Typography>}
                     />
-                </ListItem>
+                </ListItem> */}
 
-                <ListItem component='button' button onClick={ () => { console.log('Exibir minhas publicações (Anúncios e Postagens).') } } className={styles.drawerMenuListItem} key='menu_myPublications'>
+                {/* <ListItem key='menu_myPublications' component='button' button onClick={ () => { console.log('Exibir minhas publicações (Anúncios e Postagens).') } } className={styles.drawerMenuListItem} >
                     <ListItemIcon><Ballot /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Minhas publicações</Typography>}
                     />
+                </ListItem> */}
+
+                <ListItem key='menu_myProfile' button component={Link} to={`/usuario/${user?.cod_usuario}`} className={styles.drawerMenuListItem} >
+                    <ListItemIcon><AccountCircle /></ListItemIcon>
+                    <ListItemText 
+                        primary={<Typography noWrap>Meu perfil</Typography>}
+                    />
                 </ListItem>
 
-                <ListItem component='button' button onClick={ () => { console.log('Exibir a lista anúncios nos quais possuo uma candidatura.') } } className={styles.drawerMenuListItem} key='menu_myCandidatures'>
+                <ListItem key='menu_myCandidatures' button component='button' onClick={ () => { console.log('Exibir a lista anúncios nos quais possuo uma candidatura.') } } className={styles.drawerMenuListItem} >
                     <ListItemIcon><Inbox /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Minhas candidaturas</Typography>}
                     />
                 </ListItem>
 
-                <ListItem component='button' button onClick={ () => { console.log('Exibir minha lista de termos de responsabilidades em adoções aprovadas.') } } className={styles.drawerMenuListItem} key='menu_myDocs'>
+                <ListItem key='menu_myDocs' button component='button' onClick={ () => { console.log('Exibir minha lista de termos de responsabilidades em adoções aprovadas.') } } className={styles.drawerMenuListItem} >
                     <ListItemIcon><Description /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Meus documentos</Typography>}
                     />
                 </ListItem>
 
-                <ListItem component='button' button onClick={ () => { console.log('Exibir minha conta.') } } className={styles.drawerMenuListItem} key='menu_myAccount'>
-                    <ListItemIcon><AccountCircle /></ListItemIcon>
+                <ListItem key='menu_myAccount' button component={Link} to={`/usuario/${user?.cod_usuario}/detalhes`} className={styles.drawerMenuListItem} >
+                    <ListItemIcon >
+                        <MdiSvgIcon
+                            path={mdiCardAccountDetails}
+                            size={1.0}
+                            color="dimgrey"
+                        />
+                    </ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Minha conta</Typography>}
                     />
                 </ListItem>
 
-                <ListItem component='button' button onClick={handleLogout} className={styles.drawerMenuListItem} key='menu_logout'>
+                <ListItem key='menu_logout' component='button' button onClick={handleLogout} className={styles.drawerMenuListItem} >
                     <ListItemIcon><ExitToApp /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Sair</Typography>}
                     />
                 </ListItem>
 
-                <ListItem component='button' button onClick={ () => { console.log('Exibir página institucional.') } } className={styles.drawerMenuListItem} key='menu_aboutUs'>
+                <ListItem key='menu_aboutUs' component='button' button onClick={ () => { console.log('Exibir página institucional.') } } className={styles.drawerMenuListItem} >
                     <ListItemIcon><Info /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Sobre Pet Adote</Typography>}
