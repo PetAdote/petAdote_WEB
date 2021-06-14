@@ -18,7 +18,7 @@ import { useTheme, useMediaQuery, Dialog, DialogTitle, DialogContent, DialogActi
     from '@material-ui/core';
 
 import { Pets, ThumbUp, Inbox, Visibility, Close, NotInterested, FavoriteBorder, Email,
-         Description }
+         Description, Public, Edit }
     from '@material-ui/icons';
 
 import MdiSvgIcon from '@mdi/react';
@@ -28,6 +28,8 @@ import { mdiCat, mdiNeedle, mdiGenderMale, mdiGenderFemale, mdiCardAccountDetail
     from '@mdi/js';
 
 import UserAvatar from './UserAvatar';
+
+import AnnouncementRegistrationDialog from './AnnouncementRegistrationDialog';
 
 // Inicializações.
 const useStyles = makeStyles((theme) => {
@@ -96,6 +98,22 @@ const UserPetListBoxItemDetails = (props) => {
 
     const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
     const isAtMinViewPort = useMediaQuery(theme.breakpoints.down('xs'));
+
+    const [openAnnRegDialog, setOpenAnnRegDialog] = useState(false);
+    const [annRegDialogDecision, setAnnRegDialogDecision] = useState(null);
+
+    const handleOpenAnnRegDialog = () => {
+        setOpenAnnRegDialog(true);
+    }
+
+    const handleCloseAnnRegDialog = (newDecision) => {
+        setOpenAnnRegDialog(false);
+
+        if (newDecision) {
+            setAnnRegDialogDecision(newDecision);
+            // console.log('[UserPetListBoxItemDetails.js] Close announcement registration dialog decision:', newDecision);
+        }
+    }
 
     const handleClose = (newDecision) => {
         if (newDecision){
@@ -166,6 +184,7 @@ const UserPetListBoxItemDetails = (props) => {
     }
 
     return (
+        <>
         <Dialog
             open={open}
             onClose={
@@ -276,7 +295,7 @@ const UserPetListBoxItemDetails = (props) => {
                                                 <Typography component='p' variant='caption' align='center' style={{ color: 'dimgrey' }}>
                                                     {
                                                         petDetails.animal.estado_adocao === 'Sob protecao' ?
-                                                            'Obrigado por cuidar de mim!'
+                                                            'Sob sua proteção'
                                                         : null
                                                     }
                                                     {
@@ -291,7 +310,7 @@ const UserPetListBoxItemDetails = (props) => {
                                                     }
                                                     {
                                                         petDetails.animal.estado_adocao === 'Adotado' ?
-                                                            'Fui adotado! Obrigado por ter cuidado de mim!'
+                                                            'Fui adotado! Obrigado(a) por ter cuidado de mim!'
                                                         : null
                                                     }
                                                 </Typography>
@@ -315,9 +334,34 @@ const UserPetListBoxItemDetails = (props) => {
                                                 <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
 
                                                     {
+                                                        userData.user.cod_usuario !== petDetails.animal.cod_dono ?
+                                                            <ListItem component='button' button disabled key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
+                                                                <ListItemIcon><Email fontSize='small' /></ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
+                                                                />
+                                                            </ListItem>
+                                                        : null
+                                                    }
+
+                                                    {
                                                         userData.user.cod_usuario === petDetails.animal.cod_dono ?
                                                         <>
-                                                            <ListItem component='button' button key='btn_rmvPet' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                                            <ListItem component='button' button key='btn_addAnnouncement' onClick={handleOpenAnnRegDialog} classes={{ 'button': styles.menuBtns }}>
+                                                                <ListItemIcon><Public fontSize='small' /></ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Criar anúncio</Typography>}
+                                                                />
+                                                            </ListItem>
+
+                                                            <ListItem component='button' button disabled key='btn_editPet' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
+                                                                <ListItemIcon><Edit fontSize='small' /></ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Editar dados</Typography>}
+                                                                />
+                                                            </ListItem>
+
+                                                            <ListItem component='button' button disabled key='btn_rmvPet' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
                                                                 <ListItemIcon><NotInterested fontSize='small' /></ListItemIcon>
                                                                 <ListItemText
                                                                     primary={<Typography noWrap variant='button'>Remover Pet</Typography>}
@@ -326,13 +370,6 @@ const UserPetListBoxItemDetails = (props) => {
                                                         </>
                                                         : null
                                                     }
-
-                                                    <ListItem component='button' button key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                        <ListItemIcon><Email fontSize='small' /></ListItemIcon>
-                                                        <ListItemText
-                                                            primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
-                                                        />
-                                                    </ListItem>
 
                                                     {
                                                         adoptionDocs ?
@@ -507,9 +544,34 @@ const UserPetListBoxItemDetails = (props) => {
                                 <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
 
                                     {
+                                        userData.user.cod_usuario !== petDetails.animal.cod_dono ?
+                                            <ListItem component='button' button disabled key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
+                                                <ListItemIcon><Email fontSize='small' /></ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
+                                                />
+                                            </ListItem>
+                                        : null
+                                    }
+
+                                    {
                                         userData.user.cod_usuario === petDetails.animal.cod_dono ?
                                         <>
-                                            <ListItem component='button' button key='btn_rmvPet' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                            <ListItem component='button' button key='btn_addAnnouncement' onClick={handleOpenAnnRegDialog} classes={{ 'button': styles.menuBtns }}>
+                                                <ListItemIcon><Public fontSize='small' /></ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Criar anúncio</Typography>}
+                                                />
+                                            </ListItem>
+
+                                            <ListItem component='button' button disabled key='btn_editPet' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
+                                                <ListItemIcon><Edit fontSize='small' /></ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Editar dados</Typography>}
+                                                />
+                                            </ListItem>
+
+                                            <ListItem component='button' button disabled key='btn_rmvPet' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
                                                 <ListItemIcon><NotInterested fontSize='small' /></ListItemIcon>
                                                 <ListItemText
                                                     primary={<Typography noWrap variant='button'>Remover Pet</Typography>}
@@ -518,13 +580,6 @@ const UserPetListBoxItemDetails = (props) => {
                                         </>
                                         : null
                                     }
-
-                                    <ListItem component='button' button key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                        <ListItemIcon><Email fontSize='small' /></ListItemIcon>
-                                        <ListItemText
-                                            primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
-                                        />
-                                    </ListItem>
 
                                     {
                                         adoptionDocs ?
@@ -547,6 +602,19 @@ const UserPetListBoxItemDetails = (props) => {
                 : null
             }
         </Dialog>
+
+        {
+            petDetails ?
+                <AnnouncementRegistrationDialog
+                    keepMounted
+                    openDialog={openAnnRegDialog}
+                    closeDialog={handleCloseAnnRegDialog}
+                    petData={petDetails}
+                />
+            : null
+        }
+        
+        </>
     );
 }
 

@@ -18,7 +18,7 @@ const reducer = (state = initialState, action) => {
 
         case petsActionTypes.FETCH_PETS_SUCCESS:
 
-            console.log('[petsReducer] payload:', action.payload.animais);
+            // console.log('[petsReducer] payload:', action.payload.animais);
 
             let refreshedPayload = state.pets || action.payload.animais;
             let duplicates = [];
@@ -40,7 +40,7 @@ const reducer = (state = initialState, action) => {
                 });
             }
 
-            console.log('[petsReducer] refreshedPayload:', refreshedPayload);
+            // console.log('[petsReducer] refreshedPayload:', refreshedPayload);
 
             return {
                 ...state,

@@ -15,7 +15,7 @@ import { clearPets }
 import { useTheme, useMediaQuery,
         Container, Grid, Typography,
         IconButton, AppBar, Tabs, Tab,
-        CircularProgress }
+        CircularProgress, Menu, MenuItem }
     from '@material-ui/core';
 
 import { MoreVert, Add, Email }
@@ -24,6 +24,8 @@ import { MoreVert, Add, Email }
 import UserAvatar from '../components/UserAvatar';
 import TabPanel from '../components/TabPanel';
 import UserPetListContainer from '../components/UserPetListContainer';
+
+import PetRegistrationDialog from '../components/PetRegistrationDialog';
 
 // Inicializações.
 const useStyles = makeStyles((theme) => {
@@ -85,6 +87,15 @@ const UserProfileContainer = (props) => {
 
     const [tabValue, setTabValue] = useState(0);
 
+    const [anchorAddContentMenu, setAnchorAddContentMenu] = useState(null);
+    const [addContentMenuDecision, setAddContentMenuDecision] = useState(null);
+
+    const [anchorUserInteractionMenu, setAnchorUserInteractionMenu] = useState(null);
+    const [userInteractionMenuDecision, setUserInteractionMenuDecision] = useState(null);
+
+    const [openPetRegistrationDialog, setOpenPetRegistrationDialog] = useState(false);
+    const [petRegistrationDialogDecision, setPetRegistrationDialogDecision] = useState(null);
+
     const history = useHistory();
 
     const styles = useStyles();
@@ -141,11 +152,16 @@ const UserProfileContainer = (props) => {
 
         });
 
+        if (petRegistrationDialogDecision === 'NEW_PET_ADDED'){
+            clearPets();    // Se um novo pet foi adicionado, renove a lista de pets do usuário.
+            setPetRegistrationDialogDecision(null);
+        }
+
         return () => {
             clearPets();
         }
 
-    }, [profileOwnerId, clearPets]);
+    }, [profileOwnerId, clearPets, petRegistrationDialogDecision]);
 
     const handleContentTabChange = (ev, newValue) => {
         setTabValue(newValue)
@@ -157,6 +173,78 @@ const UserProfileContainer = (props) => {
             'aria-controls': `content-tabpanel-${index}`
         }
     }
+
+
+    const handleOpenAddContentMenu = (event) => {
+        setAnchorAddContentMenu(event.currentTarget);
+    }
+
+    const handleCloseAddContentMenu = (newDecision) => {
+        /** [ AddContentMenu - DecisionList ]
+        *    ADD_NEW_PET
+        *    ADD_NEW_ANNOUNCEMENT
+        *    ADD_NEW_POST
+        *    ADD_NEW_MOMENT
+        */
+
+        setAnchorAddContentMenu(null);
+
+        if (newDecision === 'ADD_NEW_PET') {
+            handleOpenPetRegistrationDialog();
+        }
+
+        if (newDecision) {
+            setAddContentMenuDecision(newDecision);
+            // console.log(newDecision);
+            // console.log('[UserProfileContainer.js] Close add content menu decision:', newDecision);
+        }
+    }
+
+    const handleOpenUserInteractionMenu = (event) => {
+        setAnchorUserInteractionMenu(event.currentTarget);
+    }
+
+    const handleCloseUserInteractionMenu = (newDecision) => {
+        /** [ UserInteractionMenu - DecisionList ]
+        *    FOLLOW
+        *    UNFOLLOW
+        *    REPORT
+        *    BLOCK
+        */
+
+        setAnchorUserInteractionMenu(null);
+
+        if (newDecision) {
+            setUserInteractionMenuDecision(newDecision);
+            // console.log(newDecision);
+            console.log('[UserProfileContainer.js] Close user interaction menu decision:', newDecision);
+        }
+    }
+
+    const handleOpenPetRegistrationDialog = () => {
+        setOpenPetRegistrationDialog(true);
+    }
+
+    const handleClosePetRegistrationDialog = (newDecision) => {
+        setOpenPetRegistrationDialog(false);
+
+        if (newDecision) {
+            setPetRegistrationDialogDecision(newDecision);
+
+            console.log('[UserProfileContainer.js] Close pet registration dialog decision:', newDecision);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
 
     return (
         <Container component='main' maxWidth='xl' className={styles.profileContainer} 
@@ -208,15 +296,55 @@ const UserProfileContainer = (props) => {
                                     </Grid>
 
                                     <Grid item>
-                                        <IconButton>
+                                        <IconButton
+                                            aria-controls="add-content-menu"
+                                            aria-haspopup="true"
+                                            onClick={handleOpenAddContentMenu}
+                                        >
                                             <Add />
                                         </IconButton>
+                                        <Menu
+                                            id="add-content-menu"
+                                            anchorEl={anchorAddContentMenu}
+                                            open={Boolean(anchorAddContentMenu)}
+                                            onClose={ () => { handleCloseAddContentMenu() } }
+                                            keepMounted
+                                        >
+                                            <MenuItem 
+                                                onClick={() => { handleCloseAddContentMenu('ADD_NEW_PET') }}
+                                            >
+                                                Novo animal
+                                            </MenuItem>
+                                            <MenuItem disabled>Novo anúncio</MenuItem>
+                                            <MenuItem disabled>Nova postagem</MenuItem>
+                                            <MenuItem disabled>Novo momento</MenuItem>
+                                        </Menu>
                                     </Grid>
 
                                     <Grid item>
-                                        <IconButton>
+                                        <IconButton
+                                            aria-controls="user-interaction-menu"
+                                            aria-haspopup="true"
+                                            onClick={handleOpenUserInteractionMenu}
+                                        >
                                             <MoreVert />
                                         </IconButton>
+                                        <Menu
+                                            id="user-interaction-menu"
+                                            anchorEl={anchorUserInteractionMenu}
+                                            open={Boolean(anchorUserInteractionMenu)}
+                                            onClose={ () => { handleCloseUserInteractionMenu() } }
+                                            keepMounted
+                                        >
+                                            <MenuItem disabled
+                                                onClick={ () => { handleCloseUserInteractionMenu('FOLLOW') } }
+                                            >
+                                                Seguir
+                                            </MenuItem>
+                                            <MenuItem disabled>Deixar de seguir</MenuItem>
+                                            <MenuItem disabled>Denunciar</MenuItem>
+                                            <MenuItem disabled>Bloquear</MenuItem>
+                                        </Menu>
                                     </Grid>
 
                                 </Grid>
@@ -297,6 +425,14 @@ const UserProfileContainer = (props) => {
                         
                     </Grid>
                 </Grid>
+
+                <PetRegistrationDialog
+                    keepMounted
+                    openDialog={openPetRegistrationDialog}
+                    closeDialog={handleClosePetRegistrationDialog}
+                />
+
+
             </>
             :
                 <CircularProgress />   

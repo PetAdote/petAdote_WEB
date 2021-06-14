@@ -56,7 +56,7 @@ const UserPetListBox = (props) => {
     const { loading, pets, hasMore } = props.petsData;
     const { especie, estadoAdocao, nomePet } = props.filters;
 
-    const fetchLimit = 1;
+    const fetchLimit = 10;
     // const [pageToFetch, setPageToFetch] = useState(1);
 
     // Sistema de Paginação com Scrolling Infinito. (Detalhes da implementação em [AnnouncementsList.js])

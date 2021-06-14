@@ -38,7 +38,7 @@ export const fetchPets = ({
         byName: undefined
     },
     page = 1,
-    limit = 1,
+    limit = 10,
 }={}) => {
 
     return (dispatch) => {

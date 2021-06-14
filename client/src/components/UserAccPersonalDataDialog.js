@@ -1,5 +1,5 @@
 // Importações.
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 // import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
@@ -15,8 +15,7 @@ import { makeStyles }
 
 // Componentes.
 import { useTheme, useMediaQuery,
-         Grid, Dialog, DialogTitle, DialogContent, DialogActions, List,
-         ListItem, ListItemIcon, ListItemText, Divider, Typography, IconButton,
+         Grid, Dialog, DialogTitle, DialogContent, DialogActions, Typography, IconButton,
          TextField, Button } 
     from '@material-ui/core';
 
@@ -49,7 +48,7 @@ const UserAccPersonalDataDialog = (props) => {
     const styles = useStyles();
     const theme = useTheme();
 
-    const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+    // const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
     const isAtMinViewPort = useMediaQuery(theme.breakpoints.down('xs'));
 
     const initialPersonalData = {

@@ -19,7 +19,7 @@ import AnnouncementsItem from '../components/AnnouncementsItem';
 // Functional Component.
 const AnnouncementsList = (props) => {
 
-    const fetchLimit = 1;   // Limite da quantidade de dados que será buscada na rest api. Se não for definida, o padrão é 10 dados por busca.
+    const fetchLimit = 10;   // Limite da quantidade de dados que será buscada na rest api. Se não for definida, o padrão é 10 dados por busca.
 
     const [pageToFetch, setPageToFetch] = useState(1);
 
