@@ -126,7 +126,7 @@ const UserPetListBoxItem = (props) => {
         setOpenDetails(false);
 
         if (newDecision) {
-            console.log('[UserPetListBoxItem.js] Close details decision:', newDecision);
+            // console.log('[UserPetListBoxItem.js] Close details decision:', newDecision);
             setDecision(newDecision);
         }
     }

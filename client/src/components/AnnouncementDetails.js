@@ -8,17 +8,19 @@ import { Link, useHistory } from 'react-router-dom';
 import { makeStyles }
     from '@material-ui/core/styles';
 
+import { useSnackbar } from 'notistack';
+
 // Actions.
-import {  }
+import { clearAnnouncements }
     from '../redux/actions';
 
 // Componentes.
 import { useTheme, useMediaQuery, Dialog, DialogTitle, DialogContent, DialogActions, List,
-         ListItem, ListItemIcon, ListItemText, Grid, Divider, Typography, IconButton } 
+         ListItem, ListItemIcon, ListItemText, Grid, Divider, Typography, IconButton, Button } 
     from '@material-ui/core';
 
 import { Pets, ThumbUp, Inbox, Visibility, Close, NotInterested, FavoriteBorder, Email,
-         Description }
+         Description, Edit }
     from '@material-ui/icons';
 
 import MdiSvgIcon from '@mdi/react';
@@ -76,7 +78,7 @@ const useStyles = makeStyles((theme) => {
             borderRadius: '4px',
             margin: '4px 0',
             paddingTop: '0',
-            paddingBottom: '0'
+            paddingBottom: '0',
         }
     }
 });
@@ -84,7 +86,8 @@ const useStyles = makeStyles((theme) => {
 // Functional Component.
 const AnnouncementDetails = (props) => {
 
-    const { userData, open, closeDetails, itemId: announcementId } = props;
+    const { userData, open, closeDetails, itemId: announcementId, clearAnnouncements } = props;
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [announcementDetails, setAnnouncementDetails] = useState(null);
     const [adoptionDocs, setAdoptionDocs] = useState(null);
@@ -165,6 +168,64 @@ const AnnouncementDetails = (props) => {
         });
 
     }
+
+    const handleRmvAnnouncement = () => {
+
+        enqueueSnackbar('Deseja realmente remover o anúncio?', {
+            variant: 'warning',
+            action: (key) => (
+                <>
+                    <Button size="small" onClick={ () => { deleteAnnouncement(key) } }>
+                        'Sim'
+                    </Button>
+                    <Button size="small" onClick={ () => { closeSnackbar(key) } }>
+                        'Não'
+                    </Button>
+                </>
+            ),
+            persist: true
+        })
+
+        const deleteAnnouncement = (snackKey) => {
+            axios.patch(`/anuncios/${announcementId}`, {
+                estado_anuncio: 'Fechado'
+            })
+            .then((response) => {
+                console.log('[AnnouncementDetails.js] announcement removed:', response.data);
+
+                closeSnackbar(snackKey);
+                handleClose();                
+                enqueueSnackbar('Anúncio removido com sucesso!', { variant: 'success' });
+                clearAnnouncements();
+            })
+            .catch((error) => {
+
+                console.log('[AnnouncementDetails.js] unexpected error @ rmv announcement:', error?.response?.data || error?.message);
+
+                const errorMsg = error.response?.data?.error?.mensagem || error.response?.data?.mensagem || 'Falha ao remover o anúncio.';
+
+                closeSnackbar(snackKey);
+                enqueueSnackbar(errorMsg, { variant: 'error' });
+
+            });
+        }
+
+    }
+
+    const handleApplyToAnnouncement = () => {
+
+    }
+
+    // Iniciar candidatura -> Ver candidaturas do anúncio (dono do recurso) -> aceitar/negar candidatura.
+
+
+
+
+
+
+
+
+
 
     return (
         <Dialog
@@ -304,59 +365,108 @@ const AnnouncementDetails = (props) => {
                                                 <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
 
                                                     {
-                                                        userData.user.cod_usuario === announcementDetails.anunciante.cod_usuario ?
+                                                        // Visitante.
+                                                        userData.user.cod_usuario !== announcementDetails.anunciante.cod_usuario ?
+                                                            
                                                         <>
-                                                            <ListItem component='button' button key='btn_checkCandidatures' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                                            <ListItem key='btn_talkWithOwner'
+                                                                component='button' button disabled
+                                                                onClick={() => {}}
+                                                                classes={{ 'button': styles.menuBtns }}
+                                                            >
+                                                                <ListItemIcon><Email fontSize='small' /></ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
+                                                                />
+                                                            </ListItem>
+                                                        
+                                                            <ListItem key='btn_addFav' title="Adicionar aos favoritos"
+                                                                component='button' button disabled
+                                                                onClick={() => {}}
+                                                                classes={{ 'button': styles.menuBtns }}
+                                                            >
+                                                                <ListItemIcon><FavoriteBorder fontSize='small' /></ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Adicionar aos favoritos</Typography>}
+                                                                    style={{  overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                                                />
+                                                            </ListItem>
+                                                        </>
+                                                        : null
+                                                    }
+                                                    {
+                                                        (userData.user.cod_usuario !== announcementDetails.anunciante.cod_usuario)
+                                                        &&
+                                                        (!announcementDetails.candidatura) ?
+                                                        // Se o visitante não possuir uma candidatura.
+                                                            
+                                                            <ListItem key='btn_apply'
+                                                                component='button' button
+                                                                onClick={handleApplyToAnnouncement}
+                                                                classes={{ 'button': styles.menuBtns }}
+                                                            >
+                                                                <ListItemIcon>
+                                                                    <MdiSvgIcon 
+                                                                        path={mdiCat}
+                                                                        size={1.0}
+                                                                        color="dimgrey"
+                                                                    />
+                                                                </ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Iniciar candidatura</Typography>}
+                                                                />
+                                                            </ListItem>
+                                                        : null
+                                                    }
+
+                                                    {
+                                                        // Dono do recurso.
+                                                        userData.user.cod_usuario === announcementDetails.anunciante.cod_usuario || userData.user.e_admin ?
+                                                        <>
+                                                            <ListItem key='btn_checkCandidatures'
+                                                                component='button' button disabled
+                                                                onClick={() => { }}
+                                                                classes={{ 'button': styles.menuBtns }}
+                                                            >
                                                                 <ListItemIcon><Inbox fontSize='small' /></ListItemIcon>
                                                                 <ListItemText
                                                                     primary={<Typography noWrap variant='button'>Ver candidaturas</Typography>}
                                                                 />
                                                             </ListItem>
 
-                                                            <ListItem component='button' button key='btn_rmvAnuncio' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                                            <ListItem key='btn_editAnnouncement'
+                                                                component='button' button disabled
+                                                                onClick={() => { }}
+                                                                classes={{ 'button': styles.menuBtns }}
+                                                            >
+                                                                <ListItemIcon><Edit fontSize='small' /></ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Editar dados</Typography>}
+                                                                />
+                                                            </ListItem>
+
+                                                            <ListItem key='btn_rmvAnuncio'
+                                                                component='button' button
+                                                                onClick={handleRmvAnnouncement}
+                                                                classes={{ 'button': styles.menuBtns }}
+                                                            >
                                                                 <ListItemIcon><NotInterested fontSize='small' /></ListItemIcon>
                                                                 <ListItemText
                                                                     primary={<Typography noWrap variant='button'>Remover anúncio</Typography>}
                                                                 />
                                                             </ListItem>
                                                         </>
-                                                        : 
-                                                        <>
-                                                            {
-                                                                !announcementDetails.candidatura ?
-                                                                <ListItem component='button' button key='btn_apply' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                                    <ListItemIcon>
-                                                                        <MdiSvgIcon 
-                                                                            path={mdiCat}
-                                                                            size={1.0}
-                                                                            color="dimgrey"
-                                                                        />
-                                                                    </ListItemIcon>
-                                                                    <ListItemText
-                                                                        primary={<Typography noWrap variant='button'>Iniciar candidatura</Typography>}
-                                                                    />
-                                                                </ListItem>
-                                                                : null
-                                                            }
-
-                                                            {/* <ListItem component='button' button key='btn_addFav' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                                <ListItemIcon><FavoriteBorder fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Adicionar aos favoritos</Typography>}
-                                                                />
-                                                            </ListItem> */}
-
-                                                            <ListItem component='button' button key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                                <ListItemIcon><Email fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
-                                                                />
-                                                            </ListItem>
-                                                        </>
+                                                        : null
                                                     }
+
                                                     {
+                                                        // Se o requirinte possui documentos de responsabilidade vinculados à candidatura, seja como tutor ou adotante.
                                                         adoptionDocs ?
-                                                            <ListItem component='a' button key='btn_getDocs' onClick={handleDoc} classes={{ 'button': styles.menuBtns }}>
+                                                            <ListItem key='btn_getDocs'
+                                                                component='a' button
+                                                                onClick={handleDoc}
+                                                                classes={{ 'button': styles.menuBtns }}
+                                                            >
                                                                 <ListItemIcon><Description fontSize='small' /></ListItemIcon>
                                                                 <ListItemText
                                                                     primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
@@ -503,59 +613,108 @@ const AnnouncementDetails = (props) => {
                                 <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
 
                                     {
-                                        userData.user.cod_usuario === announcementDetails.anunciante.cod_usuario ?
+                                        // Visitante.
+                                        userData.user.cod_usuario !== announcementDetails.anunciante.cod_usuario ?
+                                            
                                         <>
-                                            <ListItem component='button' button key='btn_checkCandidatures' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                            <ListItem key='btn_talkWithOwner'
+                                                component='button' button disabled
+                                                onClick={() => {}}
+                                                classes={{ 'button': styles.menuBtns }}
+                                            >
+                                                <ListItemIcon><Email fontSize='small' /></ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
+                                                />
+                                            </ListItem>
+                                        
+                                            <ListItem key='btn_addFav' title="Adicionar aos favoritos"
+                                                component='button' button disabled
+                                                onClick={() => {}}
+                                                classes={{ 'button': styles.menuBtns }}
+                                            >
+                                                <ListItemIcon><FavoriteBorder fontSize='small' /></ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Adicionar aos favoritos</Typography>}
+                                                    style={{  overflow: 'hidden', textOverflow: 'ellipsis' }}
+                                                />
+                                            </ListItem>
+                                        </>
+                                        : null
+                                    }
+                                    {
+                                        (userData.user.cod_usuario !== announcementDetails.anunciante.cod_usuario)
+                                        &&
+                                        (!announcementDetails.candidatura) ?
+                                        // Se o visitante não possuir uma candidatura.
+                                            
+                                            <ListItem key='btn_apply'
+                                                component='button' button
+                                                onClick={handleApplyToAnnouncement}
+                                                classes={{ 'button': styles.menuBtns }}
+                                            >
+                                                <ListItemIcon>
+                                                    <MdiSvgIcon 
+                                                        path={mdiCat}
+                                                        size={1.0}
+                                                        color="dimgrey"
+                                                    />
+                                                </ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Iniciar candidatura</Typography>}
+                                                />
+                                            </ListItem>
+                                        : null
+                                    }
+
+                                    {
+                                        // Dono do recurso.
+                                        userData.user.cod_usuario === announcementDetails.anunciante.cod_usuario || userData.user.e_admin ?
+                                        <>
+                                            <ListItem key='btn_checkCandidatures'
+                                                component='button' button disabled
+                                                onClick={() => { }}
+                                                classes={{ 'button': styles.menuBtns }}
+                                            >
                                                 <ListItemIcon><Inbox fontSize='small' /></ListItemIcon>
                                                 <ListItemText
                                                     primary={<Typography noWrap variant='button'>Ver candidaturas</Typography>}
                                                 />
                                             </ListItem>
 
-                                            <ListItem component='button' button key='btn_rmvAnuncio' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                            <ListItem key='btn_editAnnouncement'
+                                                component='button' button disabled
+                                                onClick={() => { }}
+                                                classes={{ 'button': styles.menuBtns }}
+                                            >
+                                                <ListItemIcon><Edit fontSize='small' /></ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Editar dados</Typography>}
+                                                />
+                                            </ListItem>
+
+                                            <ListItem key='btn_rmvAnuncio'
+                                                component='button' button
+                                                onClick={handleRmvAnnouncement}
+                                                classes={{ 'button': styles.menuBtns }}
+                                            >
                                                 <ListItemIcon><NotInterested fontSize='small' /></ListItemIcon>
                                                 <ListItemText
                                                     primary={<Typography noWrap variant='button'>Remover anúncio</Typography>}
                                                 />
                                             </ListItem>
                                         </>
-                                        : 
-                                        <>
-                                            {
-                                                !announcementDetails.candidatura ?
-                                                <ListItem component='button' button key='btn_apply' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                    <ListItemIcon>
-                                                        <MdiSvgIcon 
-                                                            path={mdiCat}
-                                                            size={1.0}
-                                                            color="dimgrey"
-                                                        />
-                                                    </ListItemIcon>
-                                                    <ListItemText
-                                                        primary={<Typography noWrap variant='button'>Iniciar candidatura</Typography>}
-                                                    />
-                                                </ListItem>
-                                                : null
-                                            }
-
-                                            {/* <ListItem component='button' button key='btn_addFav' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                <ListItemIcon><FavoriteBorder fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Adicionar aos favoritos</Typography>}
-                                                />
-                                            </ListItem> */}
-
-                                            <ListItem component='button' button key='btn_talkWithOwner' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                <ListItemIcon><Email fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Falar com o dono</Typography>}
-                                                />
-                                            </ListItem>
-                                        </>
+                                        : null
                                     }
+
                                     {
+                                        // Se o requirinte possui documentos de responsabilidade vinculados à candidatura, seja como tutor ou adotante.
                                         adoptionDocs ?
-                                            <ListItem component='a' button key='btn_getDocs' onClick={handleDoc} classes={{ 'button': styles.menuBtns }}>
+                                            <ListItem key='btn_getDocs'
+                                                component='a' button
+                                                onClick={handleDoc}
+                                                classes={{ 'button': styles.menuBtns }}
+                                            >
                                                 <ListItemIcon><Description fontSize='small' /></ListItemIcon>
                                                 <ListItemText
                                                     primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
@@ -588,6 +747,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        clearAnnouncements: () => { return dispatch ( clearAnnouncements() ) },
         // fetchAnnouncements: (page, limit) => { return dispatch( fetchAnnouncements(page, limit) ) },
         // openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) },
     }

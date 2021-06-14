@@ -9,6 +9,8 @@ import getGreetings from '../helpers/getGreetings';
 import { makeStyles } from '@material-ui/core/styles';
 
 // Actions.
+import { clearAnnouncements }
+    from '../redux/actions';
 
 // Components.
 import { Container } 
@@ -40,6 +42,7 @@ const Home = (props) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const { user } = props.userData;
+    const { clearAnnouncements } = props;
 
     const [openAccActivationDialog, setOpenAccActivationDialog] = useState(false);
     const [accActivationDialogDecision, setAccActivationDialogDecision] = useState(null);
@@ -62,7 +65,12 @@ const Home = (props) => {
             });
         }
 
-    }, [user, history, enqueueSnackbar]);
+        // CleanUp Function.
+        return () => {
+            clearAnnouncements();
+        }
+
+    }, [user, history, enqueueSnackbar, styles.activationSnack, clearAnnouncements]);
 
     const handleOpenAccActivationDialog = () => {
         setOpenAccActivationDialog(true);
@@ -114,6 +122,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        clearAnnouncements: () => { return dispatch( clearAnnouncements() ) }
     }
 }
  

@@ -23,6 +23,12 @@ export const fetchAnnouncementsFailure = (error) => {
     }
 }
 
+export const clearAnnouncements = () => {
+    return {
+        type: announcementsActionTypes.CLEAR_ANNOUNCEMENTS
+    }
+}
+
 // Async Action Creators.
 export const fetchAnnouncements = (page, limit = 10) => {
 

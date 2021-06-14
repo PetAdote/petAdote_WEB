@@ -892,7 +892,7 @@ const UserRegistration = (props) => {
 
         setActiveStep((prevActiveStep) => { return prevActiveStep + 1 });
         
-        setTimeout(() => {
+        // setTimeout(() => {
 
             axios.post('/registration/', {
                 email: newUserData.email,
@@ -1015,7 +1015,7 @@ const UserRegistration = (props) => {
 
             });
 
-        }, 3000)
+        // }, 3000)
         
         
     }

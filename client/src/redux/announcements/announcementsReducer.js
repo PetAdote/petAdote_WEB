@@ -60,6 +60,8 @@ const reducer = (state = initialState, action) => {
                 hasMore: false,
                 error: action.payload
             }
+        case announcementsActionTypes.CLEAR_ANNOUNCEMENTS:
+            return initialState;
         default: 
             return state;
     }
