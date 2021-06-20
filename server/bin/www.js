@@ -10,7 +10,7 @@
     const server = http.createServer(requestListeners);
 
 // Inicialização do HTTP Server.
-    server.listen(port, '127.0.0.1', () => {
+    server.listen(port, '0.0.0.0', () => {
         console.log(`React's Back-End Server running @ "http://localhost:${port}".`);
 
         axios.get(`http://127.0.0.1:3000/autenticacoes/apis/login/?cliente=${process.env.MY_REST_APP_ID}&senha=${process.env.MY_REST_APP_PASS}`)

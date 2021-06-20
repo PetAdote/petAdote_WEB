@@ -9,6 +9,7 @@ import { Switch, Route } from 'react-router-dom';
         import UserProfileContainer from './pages/UserProfileContainer';
         import UserAccDetailsPage from './pages/UserAccDetailsPage';
         // import NotFoundContainer from './pages/NotFoundContainer';
+        import AdoptionValidationPage from './pages/AdoptionValidationPage';
 
 const myRoutes = () => (
     <Switch>
@@ -30,6 +31,10 @@ const myRoutes = () => (
 
         <Route exact path="/usuario/:id/detalhes">
             <UserAccDetailsPage />
+        </Route>
+
+        <Route exact path="/validar/">
+            <AdoptionValidationPage />
         </Route>
 
         <Route path="*">

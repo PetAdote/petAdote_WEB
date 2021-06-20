@@ -14,7 +14,7 @@ import { AppBar, Divider, Drawer, Hidden, IconButton, List, ListItem, ListItemIc
     from '@material-ui/core';
 
 import { Mail, Pets, Notifications, Home, Ballot, Inbox, Description, AccountCircle,
-         Info, ExitToApp, Close }
+         Info, ExitToApp, Close, AssignmentTurnedIn }
     from '@material-ui/icons'
 
 import MdiSvgIcon from '@mdi/react';
@@ -130,7 +130,7 @@ function ResponsiveDrawer(props) {
     const handleLogout = async (ev) => {
 
         await axios.get('/auth/logout', {
-            baseURL: 'http://localhost:4000',   // Domínio do Back-end da aplicação.
+            baseURL: 'http://web-petadote.ddns.net:4000',   // Domínio do Back-end da aplicação.
             withCredentials: true
         })
         .then((response) => {
@@ -138,8 +138,9 @@ function ResponsiveDrawer(props) {
             if (response.data === 'USER_DISCONNECTED_SUCCESSFULLY'){
                 delete axios.defaults.headers.common['Authorization'];
                 axios.defaults.withCredentials = false;
-                clearUser();
+                history.location.state = {};
                 history.push('/login');
+                clearUser();
             }
 
             console.log(response.data);
@@ -371,28 +372,35 @@ function ResponsiveDrawer(props) {
                     />
                 </ListItem> */}
 
-                <ListItem key='menu_myProfile' button component={Link} to={`/usuario/${user?.cod_usuario}`} className={styles.drawerMenuListItem} >
+                <ListItem key='menu_myProfile' button component={Link} to={`/usuario/${user?.cod_usuario}`} onClick={handleDrawerClose} className={styles.drawerMenuListItem} >
                     <ListItemIcon><AccountCircle /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Meu perfil</Typography>}
                     />
                 </ListItem>
 
-                <ListItem key='menu_myCandidatures' button component='button' onClick={ () => { console.log('Exibir a lista anúncios nos quais possuo uma candidatura.') } } className={styles.drawerMenuListItem} >
+                <ListItem key='menu_myCandidatures' button component='button' disabled onClick={ () => { console.log('Exibir a lista anúncios nos quais possuo uma candidatura.') } } className={styles.drawerMenuListItem} >
                     <ListItemIcon><Inbox /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Minhas candidaturas</Typography>}
                     />
                 </ListItem>
 
-                <ListItem key='menu_myDocs' button component='button' onClick={ () => { console.log('Exibir minha lista de termos de responsabilidades em adoções aprovadas.') } } className={styles.drawerMenuListItem} >
+                <ListItem key='menu_myDocs' button component='button' disabled onClick={ () => { console.log('Exibir minha lista de termos de responsabilidades em adoções aprovadas.') } } className={styles.drawerMenuListItem} >
                     <ListItemIcon><Description /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Meus documentos</Typography>}
                     />
                 </ListItem>
 
-                <ListItem key='menu_myAccount' button component={Link} to={`/usuario/${user?.cod_usuario}/detalhes`} className={styles.drawerMenuListItem} >
+                <ListItem key='menu_validatePetAdoptionDoc' button component={Link} to={'/validar/'} onClick={handleDrawerClose} className={styles.drawerMenuListItem} >
+                    <ListItemIcon><AssignmentTurnedIn /></ListItemIcon>
+                    <ListItemText 
+                        primary={<Typography noWrap>Validar adoção</Typography>}
+                    />
+                </ListItem>
+
+                <ListItem key='menu_myAccount' button component={Link} to={`/usuario/${user?.cod_usuario}/detalhes`} onClick={handleDrawerClose} className={styles.drawerMenuListItem} >
                     <ListItemIcon >
                         <MdiSvgIcon
                             path={mdiCardAccountDetails}
@@ -412,7 +420,7 @@ function ResponsiveDrawer(props) {
                     />
                 </ListItem>
 
-                <ListItem key='menu_aboutUs' component='button' button onClick={ () => { console.log('Exibir página institucional.') } } className={styles.drawerMenuListItem} >
+                <ListItem key='menu_aboutUs' component='button' button disabled onClick={ () => { console.log('Exibir página institucional.') } } className={styles.drawerMenuListItem} >
                     <ListItemIcon><Info /></ListItemIcon>
                     <ListItemText 
                         primary={<Typography noWrap>Sobre Pet Adote</Typography>}

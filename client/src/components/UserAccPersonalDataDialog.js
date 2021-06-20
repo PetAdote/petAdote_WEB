@@ -148,7 +148,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 shrink: true
                             }}
                             fullWidth
-                            required
+                            // required
                             autoFocus
                         />
                     </Grid>
@@ -167,7 +167,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 shrink: true
                             }}
                             fullWidth
-                            required
+                            // required
                         />
                     </Grid>
                        
@@ -188,7 +188,7 @@ const UserAccPersonalDataDialog = (props) => {
                             max: '9999-12-31'  
                             }}
                             fullWidth
-                            required
+                            // required
                         />
                     </Grid>
 
@@ -207,7 +207,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 'shrink': true
                             }}
                             fullWidth
-                            required
+                            // required
                         />
                     </Grid>
 
@@ -226,7 +226,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 'shrink': true
                             }}
                             fullWidth
-                            required
+                            // required
                         />
                     </Grid>
 

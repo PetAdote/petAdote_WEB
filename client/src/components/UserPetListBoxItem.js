@@ -141,6 +141,7 @@ const UserPetListBoxItem = (props) => {
                 <Grid item xs={12} className={styles.itemBox}
                     style={{
                         backgroundImage: `url(${pet.download_foto})`, // Diferente do anúncio, essa chamada não retorna "GET http..../...jpeg", só "http .../...jpeg"
+                        border: pet.estado_adocao === 'Adotado' ? '2px solid grey' : '2px solid black',
                     }}
                 >  {/* Início - PetListBoxItem */}
 
@@ -152,10 +153,10 @@ const UserPetListBoxItem = (props) => {
                                 onClick={handleOpenDetails}
                             >
 
-                                <Grid container className={styles.boxContentHeader}>  {/* Conteúdo do Cabeçalho */}
+                                <Grid container className={styles.boxContentHeader} style={ pet.estado_adocao === 'Adotado' ? { borderBottom: '2px solid grey' } : {} }>  {/* Conteúdo do Cabeçalho */}
 
                                     <Grid item xs={12} className={styles.headerTextContainer}>
-                                        <Typography component='h1' variant='h6' title={pet.nome}>
+                                        <Typography component='h1' variant='h6' title={pet.nome} style={ pet.estado_adocao === 'Adotado' ? { color: 'grey' } : {} }>
                                             {pet.nome}
                                         </Typography>
                                     </Grid>
@@ -175,7 +176,7 @@ const UserPetListBoxItem = (props) => {
                         </Grid>    {/* Fim - Área de clique da imagem do PetListBoxItem */}
 
                         <Grid item> {/* Início - Área de Ícones informativos do PetListBoxItem */}
-                            <Grid container wrap='nowrap' className={styles.infoIconsContainer}>
+                            <Grid container wrap='nowrap' className={styles.infoIconsContainer} style={ pet.estado_adocao === 'Adotado' ? { borderTop: '2px solid grey' } : {} }>
 
                                 <Grid item xs={12} className={styles.extraIconsContainer}>  {/* Início - Extra Icons */}
                                     

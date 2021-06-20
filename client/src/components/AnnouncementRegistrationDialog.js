@@ -222,7 +222,7 @@ const AnnouncementRegistrationDialog = (props) => {
             .then((response) => {
 
                 if (response.data.fotos){
-                    console.log(response.data.fotos);
+                    console.log('[AnnouncementRegistrationDialog.js] first batch of pet photos:', response.data.fotos);
                     setPetPhotosArr(petPhotosArr.concat(response.data.fotos));
                 }
 
@@ -475,7 +475,7 @@ const AnnouncementRegistrationDialog = (props) => {
                         <Grid container alignItems='center' style={{ height: '100%' }}>
                             <Grid item xs={12} style={{ padding: '4px 8px' }}>
                                 <Typography component='p' variant={ isAtMinViewPort ? 'caption' : 'body2' }>
-                                    <b>Dica:</b> Você pode selecionar uma foto da galeria abaixo ou clicar na foto destacada para iniciar o anúncio com uma nova foto, enviada diretamente do armazenamento do seu dispositivo.
+                                    <b>Dica:</b> Você pode selecionar uma foto da galeria abaixo ou clicar na foto destacada para iniciar o anúncio com uma nova foto enviada diretamente do armazenamento do seu dispositivo.
                                 </Typography>
                             </Grid>
                         </Grid>

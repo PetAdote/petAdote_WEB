@@ -1,23 +1,25 @@
 // Importações.
-import { useState, useEffect } from 'react';
-// import { connect } from 'react-redux';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 // Utilidades.
-// import axios from '../helpers/axiosInstance';
-// import { Link, useHistory } from 'react-router-dom';
+import axios from '../helpers/axiosInstance';
 import { makeStyles }
     from '@material-ui/core/styles';
 
+import { useSnackbar } from 'notistack';
+
 // Actions.
-// import {  }
+// import { fetchUser }
 //     from '../redux/actions';
 
 // Componentes.
 import { useTheme, useMediaQuery,
          Grid, Dialog, DialogTitle, DialogContent, DialogActions, List,
          ListItem, ListItemIcon, ListItemText, Divider, Typography, IconButton,
-         TextField, Button, MenuItem } 
+         TextField, Button, MenuItem, FormControlLabel, Checkbox } 
     from '@material-ui/core';
 
 import { Close }
@@ -26,9 +28,13 @@ import { Close }
 // Inicializações.
 const useStyles = makeStyles((theme) => {
     return {
+
         addressDataDialog: {
             width: '800px',
-            backgroundColor: 'ghostwhite'
+            backgroundColor: 'ghostwhite',
+            [theme.breakpoints.between('sm', 'lg')]: {
+                // right: '4px'
+            }
         },
         formInput: {
             padding: '8px 0'
@@ -42,12 +48,13 @@ const useStyles = makeStyles((theme) => {
 });
 
 // Functional Component.
-const UserAccPersonalDataDialog = (props) => {
+const CandidatureApprovalDialog = (props) => {
 
-    const { openDialog, closeDialog, userAddressData, setUserAddressData } = props;
+    const { openDialog, closeDialog, candidatureData } = props;
 
     const styles = useStyles();
     const theme = useTheme();
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
     const isAtMinViewPort = useMediaQuery(theme.breakpoints.down('xs'));
@@ -63,6 +70,8 @@ const UserAccPersonalDataDialog = (props) => {
     };
 
     const [newAddressData, setNewAddressData] = useState(initialAddressData);
+
+    const [confirm, setConfirm] = useState(false);
 
     const estados = [
         { value: "DEFAULT", label: "Selecione seu estado" },
@@ -103,33 +112,59 @@ const UserAccPersonalDataDialog = (props) => {
         closeDialog();
     }
 
-    // const handleEntering = () => {
-        // Se for necessário executar algo quando o dialog aparece, faça aqui.
-    // }
-
-    const handleGoBackToVerify = () => {
-        setUserAddressData({ ...userAddressData, ...newAddressData });
-        handleClose();
-    }
-
     const handleClear = () => {
         setNewAddressData(initialAddressData);
     }
 
-    const handleGoBackAndClear = () => {
-        setNewAddressData(initialAddressData);
-        setUserAddressData({ ...userAddressData, ...initialAddressData });
-        handleClose();
+    const handleGoBackAndClear = (newDecision) => {
+        // setNewAddressData(initialAddressData);
+        handleClose(newDecision);
+    }
+
+    const handleSetCandidatureConclusionLocation = () => {
+        // console.log('[CandidatureApprovalDialog.js] candidature conclusion location: ', newAddressData);
+        // console.log('[CandidatureApprovalDialog.js] candidature data: ', candidatureData);
+
+        if (!confirm){
+            return enqueueSnackbar('Para continuar é necessário confirmar a declaração acima.', { variant: 'info' });
+        }
+
+        axios.post(`/anuncios/candidaturas/pontosencontro/${candidatureData.cod_candidatura}`, {
+            cep: newAddressData.cep,
+            uf: newAddressData.uf === 'DEFAULT' ? '' : newAddressData.uf,
+            cidade: newAddressData.cidade,
+            bairro: newAddressData.bairro,
+            logradouro: newAddressData.logradouro,
+            numero: newAddressData.numero
+        })
+        .then((response) => {
+
+            console.log('[CandidatureApprovalDialog.js] adoption location has been set:', response.data);
+
+            enqueueSnackbar('O local de encontro da adoção foi registrado! A candidatura será aprovada em breve...', { variant: 'success', autoHideDuration: 20 * 1000 });
+            handleGoBackAndClear('ADOPTION_LOCATION_IS_SET');
+
+        })
+        .catch((error) => {
+
+            console.log('[CandidatureApprovalDialog.js] unexpected error @ set adoption location:', error?.response?.data || error?.message);
+
+            const errorMsg = error.response?.data?.error?.mensagem || error.response?.data?.mensagem || 'Falha ao registrar o local de conclusão da adoção.';
+
+            enqueueSnackbar(errorMsg, { variant: 'error' });
+            handleGoBackAndClear();
+        });
+
     }
 
     return (
         <Dialog
             open={openDialog}
-            onClose={
-                () => {
-                    handleGoBackAndClear();
-                }
-            }
+            // onClose={
+            //     () => {
+            //         handleGoBackAndClear();
+            //     }
+            // }
             // onEntering={handleEntering}
             // disableScrollLock={true}
             maxWidth="sm"
@@ -149,7 +184,7 @@ const UserAccPersonalDataDialog = (props) => {
                     <Grid item xs={11} sm={9} style={{ margin: '0 auto'}}>
                         <Grid container>
                             <Grid item xs={12} style={{ overflow: 'auto', whiteSpace: 'nowrap' }}>
-                                <Typography component='h1' variant='h6' align='center'>Endereço</Typography>
+                                <Typography component='h1' variant='h6' align='center'>Local de Encontro</Typography>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -166,6 +201,12 @@ const UserAccPersonalDataDialog = (props) => {
             <DialogContent style={{ padding: '8px' }} dividers>
 
                 <Grid container>
+
+                    <Grid item xs={12} style={{ padding: '4px 8px' }}>
+                        <Typography component='p' variant='caption'>
+                            Defina o local onde a entrega do animal será realizada.
+                        </Typography>
+                    </Grid>
 
                     <Grid item xs={6} className={styles.formInput}
                         style={{paddingRight: '8px'}}
@@ -184,7 +225,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 shrink: true
                             }}
                             fullWidth
-                            // required
+                            required
                             autoFocus
                         />
                     </Grid>
@@ -204,7 +245,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 shrink: true
                             }}
                             fullWidth
-                            // required
+                            required
                         />
                     </Grid>
 
@@ -222,7 +263,7 @@ const UserAccPersonalDataDialog = (props) => {
                             }}
                             select
                             fullWidth
-                            // required
+                            required
                         >
                             {
                                 estados.map((option) => {
@@ -251,7 +292,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 shrink: true
                             }}
                             fullWidth
-                            // required
+                            required
                         />
                     </Grid>
 
@@ -270,7 +311,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 shrink: true
                             }}
                             fullWidth
-                            // required
+                            required
                         />
                     </Grid>
 
@@ -289,7 +330,7 @@ const UserAccPersonalDataDialog = (props) => {
                                 shrink: true
                             }}
                             fullWidth
-                            // required
+                            required
                         />
                     </Grid>
 
@@ -311,6 +352,26 @@ const UserAccPersonalDataDialog = (props) => {
                         />
                     </Grid>
 
+                    <Grid item xs={12} style={{ padding: '4px 8px' }}>
+                        <Typography component='p' variant='caption'>
+                            <b>Atenção:</b> Ao clicar em concluir <b>você aprovará a candidatura selecionada e estará declarando que o endereço de encontro para a entrega do animal ao candidato é real e seguro</b>. Antes de prosseguir, certifique-se de que as informações estão corretas e que o candidato está ciente e de acordo com o local de encontro.
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center', padding: '8px' }}>
+                        <FormControlLabel 
+                            control={
+                                <Checkbox 
+                                    checked={confirm}
+                                    color='primary'
+                                    onChange={(ev) => { setConfirm(!confirm) }}
+                                />
+                            }
+                            label="As informações estão corretas e o candidato está ciente e de acordo com o local de encontro."
+                            labelPlacement='end'
+                        />
+                    </Grid>
+
                 </Grid>
 
             </DialogContent>
@@ -320,14 +381,14 @@ const UserAccPersonalDataDialog = (props) => {
                 <Grid container justify='center'>
                     <Grid item>
                         <Button 
-                            onClick={handleGoBackToVerify}
+                            onClick={handleSetCandidatureConclusionLocation}
                             // disabled={activeStep === 0}
                             variant='contained'
                             color='primary'
                             size='small'
                             className={styles.formButton}
                         >
-                            Verificar
+                            Concluir
                         </Button>
                     </Grid>
 
@@ -364,15 +425,36 @@ const UserAccPersonalDataDialog = (props) => {
 
         </Dialog>
     );
-    
+
 }
 
-UserAccPersonalDataDialog.propTypes = {
+
+CandidatureApprovalDialog.propTypes = {
     openDialog: PropTypes.bool.isRequired,
     closeDialog: PropTypes.func.isRequired,
-    userAddressData: PropTypes.object.isRequired,
-    setUserAddressData: PropTypes.func.isRequired
+    // userAddressData: PropTypes.object.isRequired,
+    // setUserAddressData: PropTypes.func.isRequired
+}
+
+// Redux Store Mapping.
+const mapStateToProps = (state) => {
+    return {
+        userData: state.user
+        // announcementsData: state.announcements
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        // clearPets: () => { return dispatch( clearPets() ) },
+        // openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) }
+        // fetchAnnouncements: (page, limit) => { return dispatch( fetchAnnouncements(page, limit) ) },
+        // fetchUser: () => { return dispatch ( fetchUser() ) },
+    }
 }
 
 // Exportações.
-export default UserAccPersonalDataDialog;
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(CandidatureApprovalDialog);

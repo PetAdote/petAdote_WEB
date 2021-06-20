@@ -30,6 +30,7 @@ import { mdiCat, mdiNeedle, mdiGenderMale, mdiGenderFemale, mdiCardAccountDetail
     from '@mdi/js';
 
 import UserAvatar from './UserAvatar';
+import CandidatesListDialog from './CandidatesListDialog';
 
 // Inicializações.
 const useStyles = makeStyles((theme) => {
@@ -99,6 +100,23 @@ const AnnouncementDetails = (props) => {
 
     const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
     const isAtMinViewPort = useMediaQuery(theme.breakpoints.down('xs'));
+
+    const [openCandidatesList, setOpenCandidatesList] = useState(false);
+    const [candidatesListDecision, setCandidatesListDecision] = useState(null);
+
+    const handleOpenCandidatesList = () => {
+        setOpenCandidatesList(true);
+    }
+
+    const handleCloseCandidatesList = (newDecision) => {
+        setOpenCandidatesList(false);
+        handleEntering();
+
+        if (newDecision) {
+            setCandidatesListDecision(newDecision);
+            // console.log('[AnnouncementDetails.js] Close candidates list decision:', newDecision);
+        }
+    }
 
     const handleClose = (newDecision) => {
         if (newDecision){
@@ -213,7 +231,26 @@ const AnnouncementDetails = (props) => {
     }
 
     const handleApplyToAnnouncement = () => {
+        
+        axios.post(`/anuncios/candidaturas/${announcementId}`)
+        .then((response) => {
+            
+            console.log('[AnnouncementDetails.js] user applied to announcement as candidate:', response.data);
 
+            // * Um dialog contendo informações sobre o processo e respnosabilidades do usuário ao adotar um animal deve ser exibido, o usuário deverá marcar um checkbox indicando que leus as informações, e clicar na opção "Candidatar-se" antes de prosseguir, se não desejar continuar ele poderá clicar em "Cancelar".
+            enqueueSnackbar('Candidatura realizada com sucesso.', { variant: 'success' }); // <- Temporário.
+
+        })
+        .catch((error) => {
+
+            console.log('[AnnouncementDetails.js] unexpected error @ apply as candidate to announcement:', error?.response?.data || error?.message);
+
+            const errorMsg = error.response?.data?.error?.mensagem || error.response?.data?.mensagem || 'Falha ao remover o anúncio.';
+
+            enqueueSnackbar(errorMsg, { variant: 'error' });
+
+        });
+        
     }
 
     // Iniciar candidatura -> Ver candidaturas do anúncio (dono do recurso) -> aceitar/negar candidatura.
@@ -228,6 +265,7 @@ const AnnouncementDetails = (props) => {
 
 
     return (
+        <>
         <Dialog
             open={open}
             onClose={
@@ -356,13 +394,29 @@ const AnnouncementDetails = (props) => {
                                     
                                     {
                                         isDesktop ?
-                                        <Grid item xs={12}>
+                                        <Grid item xs={12} >
                                             <Typography component='h2' align='center' style={{ fontWeight: 'bold', marginTop: '8px' }}>
                                                 Opções
                                             </Typography>
                                             <DialogActions style={{ maxHeight: '130px' }} >
 
-                                                <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
+                                                <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%', padding: '8px' }}>
+
+                                                    {
+                                                        // Se o requirinte possui documentos de responsabilidade vinculados à candidatura, seja como tutor ou adotante.
+                                                        adoptionDocs ?
+                                                            <ListItem key='btn_getDocs'
+                                                                component='a' button
+                                                                onClick={handleDoc}
+                                                                classes={{ 'button': styles.menuBtns }}
+                                                            >
+                                                                <ListItemIcon><Description fontSize='small' /></ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
+                                                                />
+                                                            </ListItem>
+                                                        : null
+                                                    }
 
                                                     {
                                                         // Visitante.
@@ -424,8 +478,8 @@ const AnnouncementDetails = (props) => {
                                                         userData.user.cod_usuario === announcementDetails.anunciante.cod_usuario || userData.user.e_admin ?
                                                         <>
                                                             <ListItem key='btn_checkCandidatures'
-                                                                component='button' button disabled
-                                                                onClick={() => { }}
+                                                                component='button' button
+                                                                onClick={handleOpenCandidatesList}
                                                                 classes={{ 'button': styles.menuBtns }}
                                                             >
                                                                 <ListItemIcon><Inbox fontSize='small' /></ListItemIcon>
@@ -456,22 +510,6 @@ const AnnouncementDetails = (props) => {
                                                                 />
                                                             </ListItem>
                                                         </>
-                                                        : null
-                                                    }
-
-                                                    {
-                                                        // Se o requirinte possui documentos de responsabilidade vinculados à candidatura, seja como tutor ou adotante.
-                                                        adoptionDocs ?
-                                                            <ListItem key='btn_getDocs'
-                                                                component='a' button
-                                                                onClick={handleDoc}
-                                                                classes={{ 'button': styles.menuBtns }}
-                                                            >
-                                                                <ListItemIcon><Description fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
-                                                                />
-                                                            </ListItem>
                                                         : null
                                                     }
 
@@ -610,7 +648,23 @@ const AnnouncementDetails = (props) => {
                             </Typography>
                             <DialogActions style={{ maxHeight: '130px' }} >
 
-                                <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
+                                <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%', padding: '8px' }}>
+
+                                    {
+                                        // Se o requirinte possui documentos de responsabilidade vinculados à candidatura, seja como tutor ou adotante.
+                                        adoptionDocs ?
+                                            <ListItem key='btn_getDocs'
+                                                component='a' button
+                                                onClick={handleDoc}
+                                                classes={{ 'button': styles.menuBtns }}
+                                            >
+                                                <ListItemIcon><Description fontSize='small' /></ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
+                                                />
+                                            </ListItem>
+                                        : null
+                                    }
 
                                     {
                                         // Visitante.
@@ -672,8 +726,8 @@ const AnnouncementDetails = (props) => {
                                         userData.user.cod_usuario === announcementDetails.anunciante.cod_usuario || userData.user.e_admin ?
                                         <>
                                             <ListItem key='btn_checkCandidatures'
-                                                component='button' button disabled
-                                                onClick={() => { }}
+                                                component='button' button
+                                                onClick={handleOpenCandidatesList}
                                                 classes={{ 'button': styles.menuBtns }}
                                             >
                                                 <ListItemIcon><Inbox fontSize='small' /></ListItemIcon>
@@ -707,22 +761,6 @@ const AnnouncementDetails = (props) => {
                                         : null
                                     }
 
-                                    {
-                                        // Se o requirinte possui documentos de responsabilidade vinculados à candidatura, seja como tutor ou adotante.
-                                        adoptionDocs ?
-                                            <ListItem key='btn_getDocs'
-                                                component='a' button
-                                                onClick={handleDoc}
-                                                classes={{ 'button': styles.menuBtns }}
-                                            >
-                                                <ListItemIcon><Description fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
-                                                />
-                                            </ListItem>
-                                        : null
-                                    }
-
                                 </List>
                             </DialogActions>
                         </div>
@@ -733,6 +771,19 @@ const AnnouncementDetails = (props) => {
                 : null
             }
         </Dialog>
+
+        {
+            announcementDetails ?
+                <CandidatesListDialog
+                    keepMounted
+                    openDialog={openCandidatesList}
+                    closeDialog={handleCloseCandidatesList}
+                    announcementDetails={announcementDetails}
+                />
+            : null
+        }
+
+        </>
     );
 }
 

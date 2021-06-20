@@ -21,6 +21,7 @@ const UserAvatar = (props) => {
     
     const {
         user, 
+        avatarUrl,
         width = '80px',
         height = '80px',
         badgesWidth = '24px',
@@ -63,7 +64,7 @@ const UserAvatar = (props) => {
             overlap='circle'
             invisible={showUserTypeBadge ? false : true }
         >
-            <Avatar alt={user?.primeiro_nome + ' ' + user?.sobrenome} src={user?.download_avatar || user?.download_foto?.split(' ')?.[1]} className={styles.userAvatar} style={customStyle} />
+            <Avatar alt={user?.primeiro_nome + ' ' + user?.sobrenome} src={avatarUrl || user?.download_avatar || user?.download_foto?.split(' ')?.[1]} className={styles.userAvatar} style={customStyle} />
         </Badge>
     );
     if (user?.ong_ativo){
@@ -108,7 +109,7 @@ const UserAvatar = (props) => {
                 overlap='circle'
                 invisible={showUserTypeBadge ? false : true }
             >
-                <Avatar alt={user?.primeiro_nome + ' ' + user?.sobrenome} src={user?.download_avatar || user?.download_foto?.split(' ')?.[1]} className={styles.userAvatar} style={customStyle} />
+                <Avatar alt={user?.primeiro_nome + ' ' + user?.sobrenome} src={avatarUrl || user?.download_avatar || user?.download_foto?.split(' ')?.[1]} className={styles.userAvatar} style={customStyle} />
             </Badge>
             </Badge>
         );
@@ -119,6 +120,7 @@ const UserAvatar = (props) => {
 
 UserAvatar.propTypes = {
     user: PropTypes.object,
+    avatarUrl: PropTypes.string,
     width: PropTypes.string,
     height: PropTypes.string,
     badgesWidth: PropTypes.string,

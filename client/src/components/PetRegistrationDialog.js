@@ -12,8 +12,8 @@ import { makeStyles }
 import { useSnackbar } from 'notistack';
 
 // Actions.
-// import { }
-//     from '../redux/actions';
+import { clearPets }
+    from '../redux/actions';
 
 // Componentes.
 import { useTheme, useMediaQuery,
@@ -488,6 +488,7 @@ const DataInputStep = (props) => {
                     fullWidth
                     multiline
                     rows={2}
+                    required
                 />
             </Grid>
 
@@ -690,7 +691,7 @@ const DataVerificationStep = (props) => {
 // Functional Component.
 const PetRegistrationDialog = (props) => {
 
-    const { openDialog, closeDialog } = props;
+    const { openDialog, closeDialog, clearPets } = props;
     const { user } = props.userData;
 
     const styles = useStyles();
@@ -895,6 +896,7 @@ const PetRegistrationDialog = (props) => {
 
             setIsLoading(false);
             enqueueSnackbar('Cadastro do pet realizado com sucesso!', { variant: 'success' });
+            clearPets();
             handleGoBackAndClear('NEW_PET_ADDED');
 
         })
@@ -1121,7 +1123,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        // clearPets: () => { return dispatch( clearPets() ) },
+        clearPets: () => { return dispatch( clearPets() ) },
         // openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) }
         // fetchAnnouncements: (page, limit) => { return dispatch( fetchAnnouncements(page, limit) ) },
         // fetchUser: () => { return dispatch ( fetchUser() ) },

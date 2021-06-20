@@ -89,6 +89,7 @@ const LoginContainer = (props) => {
 
     const { user } = props.userData;
     const { openSnackbar, fetchUser } = props;
+    
 
     useEffect(() => {
 
@@ -98,8 +99,17 @@ const LoginContainer = (props) => {
         */
 
         if (user?.cod_usuario){
-            history.push('/');
+            // const redirectTo = history.location.state?.redirectTo;
+            const { redirectTo } = history.location.state || {};
+            console.log('RedirectTO', redirectTo);
+            if (redirectTo){
+                history.push(redirectTo, {});
+            } else {
+                history.push('/');
+            }
         }
+
+        console.log('[LoginContainer.js] router react dom history state:', history);
 
     }, [user, history]);
 
@@ -116,7 +126,7 @@ const LoginContainer = (props) => {
             password,
             remember
         }, {
-            baseURL: 'http://localhost:4000',   // Domínio do Back-end da aplicação.
+            baseURL: 'http://web-petadote.ddns.net:4000',   // Domínio do Back-end da aplicação.
             withCredentials: true
         })
         .then((response) => {

@@ -5,14 +5,14 @@ import PropTypes from 'prop-types';
 
 // Utilidades.
 import axios from '../helpers/axiosInstance';
-// import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { makeStyles }
     from '@material-ui/core/styles';
 
 import { useSnackbar } from 'notistack';
 
 // Actions.
-import { fetchUser }
+import { fetchUser, clearUser }
     from '../redux/actions';
 
 // Componentes.
@@ -24,6 +24,7 @@ import { useTheme, useMediaQuery,
 
 import { Close, Visibility, VisibilityOff }
     from '@material-ui/icons';
+
 
 // Inicializações.
 const useStyles = makeStyles((theme) => {
@@ -54,11 +55,12 @@ const useStyles = makeStyles((theme) => {
 // Functional Component.
 const UserAccActivationDialog = (props) => {
 
-    const { openDialog, closeDialog, fetchUser } = props;
+    const { openDialog, closeDialog, fetchUser, clearUser } = props;
     const { user } = props.userData;
 
     const styles = useStyles();
     const theme = useTheme();
+    const history = useHistory();
     const { enqueueSnackbar } = useSnackbar();
 
     const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
@@ -90,6 +92,31 @@ const UserAccActivationDialog = (props) => {
 
     }
 
+    const handleLogout = async () => {
+
+        await axios.get('/auth/logout', {
+            baseURL: 'http://web-petadote.ddns.net:4000',   // Domínio do Back-end da aplicação.
+            withCredentials: true
+        })
+        .then((response) => {
+            
+            if (response.data === 'USER_DISCONNECTED_SUCCESSFULLY'){
+                delete axios.defaults.headers.common['Authorization'];
+                axios.defaults.withCredentials = false;
+                history.location.state = {};
+                history.push('/login');
+                clearUser();
+            }
+
+            console.log(response.data);
+            
+        })
+        .catch((error) => {
+            console.log(error?.response?.data || error?.message);
+        });
+
+    }
+
     const handleActivateAcc = () => {
         // console.log(newActivationData);
 
@@ -101,7 +128,8 @@ const UserAccActivationDialog = (props) => {
 
                     enqueueSnackbar('Parabéns, sua conta foi ativada com sucesso!', { variant: 'success' });
                     setNewActivationData(initialActivationData);
-                    fetchUser();
+                    // fetchUser();
+                    clearUser();
                     handleClose();
                 }
             })
@@ -243,7 +271,7 @@ const UserAccActivationDialog = (props) => {
 
                     <Grid item xs={12} style={{ padding: '4px 8px' }}>
                         <Typography component='p' variant='caption'>
-                            Após ativar a sua conta você poderá criar anúncios e candidatar-se como um adotante! 🐱🐶 
+                            <b>Atenção:</b> Após ativar a sua conta <b>você precisará realizar a autenticação novamente</b>, mas logo após se autenticar, poderá criar anúncios e candidatar-se como um adotante! 🐱🐶 
                         </Typography>
                     </Grid>
 
@@ -326,6 +354,7 @@ const mapDispatchToProps = (dispatch) => {
         // openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) }
         // fetchAnnouncements: (page, limit) => { return dispatch( fetchAnnouncements(page, limit) ) },
         fetchUser: () => { return dispatch ( fetchUser() ) },
+        clearUser: () => { return dispatch ( clearUser() ) },
     }
 }
 
