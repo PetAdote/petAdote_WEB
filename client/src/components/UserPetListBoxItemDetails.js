@@ -7,14 +7,15 @@ import axios from '../helpers/axiosInstance';
 import { Link, useHistory } from 'react-router-dom';
 import { makeStyles }
     from '@material-ui/core/styles';
+import { useSnackbar } from 'notistack';
 
 // Actions.
-import {  }
+import { clearPets }
     from '../redux/actions';
 
 // Componentes.
 import { useTheme, useMediaQuery, Dialog, DialogTitle, DialogContent, DialogActions, List,
-         ListItem, ListItemIcon, ListItemText, Grid, Divider, Typography, IconButton } 
+         ListItem, ListItemIcon, ListItemText, Grid, Divider, Typography, IconButton, Button } 
     from '@material-ui/core';
 
 import { Pets, ThumbUp, Inbox, Visibility, Close, NotInterested, FavoriteBorder, Email,
@@ -87,9 +88,12 @@ const useStyles = makeStyles((theme) => {
 const UserPetListBoxItemDetails = (props) => {
 
     const { userData, open, closeDetails, itemId: petId } = props;
+    const { clearPets } = props;
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [petDetails, setPetDetails] = useState(null);
     const [adoptionDocs, setAdoptionDocs] = useState(null);
+    const [petAdopter, setPetAdopter] = useState(null);
 
     const styles= useStyles();
     const theme = useTheme();
@@ -148,6 +152,8 @@ const UserPetListBoxItemDetails = (props) => {
 
     const handleEntering = () => {
 
+        // console.log(petDetails);
+
         axios.get(`/usuarios/animais/?getOne=${petId}`)
         .then((response) => {
             if (response.data){
@@ -156,15 +162,19 @@ const UserPetListBoxItemDetails = (props) => {
 
                 const anuncio = response.data.animal?.anuncio;
 
+                console.log(response.data);
+
                 if (anuncio){
 
                     // A chamada verificará se o usuário requisitante (autenticado no momento) possui algum documento
                     // vínculado ao anúncio que esse animal possui.
                     axios.get(`/anuncios/candidaturas/documentos/?fromAnnouncement=${anuncio.cod_anuncio}`)
                     .then((response) => {
+
                         if (response.data.download_documento){
                             setAdoptionDocs(response.data.download_documento.split(' ')[1]);
                         }
+
                     })
                     .catch((error) => {
                         if (error.response.status === 404){
@@ -172,6 +182,24 @@ const UserPetListBoxItemDetails = (props) => {
                         }
                         return console.log('[UserPetListBoxItemDetails.js/handleEntering]: ', error.response?.data?.mensagem || error?.message || 'UNKNOWN');
                     });
+
+                    if (anuncio.Candidaturas?.[0]?.cod_candidato){
+
+                        const cod_adotante = anuncio.Candidaturas?.[0]?.cod_candidato;
+
+                        axios.get(`/usuarios/${cod_adotante}`)
+                        .then((response) => {
+
+                            if (response.data.usuario){
+                               setPetAdopter(response.data.usuario);
+                            }
+
+                        })
+                        .catch((error) => {
+                            return console.log('[UserPetListBoxItemDetails.js] unexpected error @ fetch adopter data: ', error.response?.data?.mensagem || error?.message || 'UNKNOWN');
+                        })
+
+                    }
 
                 }
                 
@@ -182,6 +210,59 @@ const UserPetListBoxItemDetails = (props) => {
         });
 
     }
+
+    const handleRmvPet = () => {
+
+        enqueueSnackbar('Deseja realmente remover o pet?', {
+            variant: 'warning',
+            action: (key) => (
+                <>
+                    <Button size="small" onClick={ () => { rmvPet(key) } }>
+                        'Sim'
+                    </Button>
+                    <Button size="small" onClick={ () => { closeSnackbar(key) } }>
+                        'Não'
+                    </Button>
+                </>
+            )
+        });
+
+        const rmvPet = (snackKey) => {
+
+            axios.patch(`/usuarios/animais/${petId}`, {
+                ativo: '0'
+            })
+            .then((response) => {
+                console.log('[UserPetListBoxItemDetails.js] pet box item details removal:', response.data);
+
+                closeSnackbar(snackKey);
+                handleClose();
+                enqueueSnackbar('Pet removido com sucesso!', { variant: 'success' });
+                clearPets();
+
+            })
+            .catch((error) => {
+
+                console.log('[UserPetListBoxItemDetails.js] unexpected error @ pet box item details removal:', error?.response?.data || error?.message);
+
+                const errorMsg = error.response?.data?.error?.mensagem || error.response?.data?.mensagem || 'Falha ao remover o anúncio.';
+
+                closeSnackbar(snackKey);
+                enqueueSnackbar(errorMsg, { variant: 'error' });
+
+            });
+
+        }
+
+    }
+
+
+
+
+
+
+
+
 
     return (
         <>
@@ -310,7 +391,7 @@ const UserPetListBoxItemDetails = (props) => {
                                                     }
                                                     {
                                                         petDetails.animal.estado_adocao === 'Adotado' ?
-                                                            'Fui adotado! Obrigado(a) por ter cuidado de mim!'
+                                                            'Fui adotado(a)! Obrigado(a) por ter cuidado de mim!'
                                                         : null
                                                     }
                                                 </Typography>
@@ -331,7 +412,18 @@ const UserPetListBoxItemDetails = (props) => {
                                             </Typography>
                                             <DialogActions style={{ maxHeight: '130px' }} >
 
-                                                <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
+                                                <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%', padding: '8px' }}>
+
+                                                    {
+                                                        adoptionDocs ?
+                                                            <ListItem component='a' button key='btn_getDocs' onClick={handleDoc} classes={{ 'button': styles.menuBtns }}>
+                                                                <ListItemIcon><Description fontSize='small' /></ListItemIcon>
+                                                                <ListItemText
+                                                                    primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
+                                                                />
+                                                            </ListItem>
+                                                        : null
+                                                    }
 
                                                     {
                                                         userData.user.cod_usuario !== petDetails.animal.cod_dono ?
@@ -347,39 +439,36 @@ const UserPetListBoxItemDetails = (props) => {
                                                     {
                                                         userData.user.cod_usuario === petDetails.animal.cod_dono ?
                                                         <>
-                                                            <ListItem component='button' button key='btn_addAnnouncement' onClick={handleOpenAnnRegDialog} classes={{ 'button': styles.menuBtns }}>
-                                                                <ListItemIcon><Public fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Criar anúncio</Typography>}
-                                                                />
-                                                            </ListItem>
+                                                            {
+                                                            petDetails.animal.estado_adocao !== 'Adotado' ?
+                                                                <>
+                                                                    <ListItem component='button' button key='btn_addAnnouncement' onClick={handleOpenAnnRegDialog} classes={{ 'button': styles.menuBtns }}>
+                                                                        <ListItemIcon><Public fontSize='small' /></ListItemIcon>
+                                                                        <ListItemText
+                                                                            primary={<Typography noWrap variant='button'>Criar anúncio</Typography>}
+                                                                        />
+                                                                    </ListItem>
 
-                                                            <ListItem component='button' button disabled key='btn_editPet' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                                <ListItemIcon><Edit fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Editar dados</Typography>}
-                                                                />
-                                                            </ListItem>
+                                                                    <ListItem component='button' button disabled key='btn_editPet' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
+                                                                        <ListItemIcon><Edit fontSize='small' /></ListItemIcon>
+                                                                        <ListItemText
+                                                                            primary={<Typography noWrap variant='button'>Editar dados</Typography>}
+                                                                        />
+                                                                    </ListItem>
+                                                                </>
+                                                            :
+                                                                null
+                                                            }
 
-                                                            <ListItem component='button' button disabled key='btn_rmvPet' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                                            <ListItem component='button' button key='btn_rmvPet' onClick={handleRmvPet} classes={{ 'button': styles.menuBtns }}>
                                                                 <ListItemIcon><NotInterested fontSize='small' /></ListItemIcon>
                                                                 <ListItemText
                                                                     primary={<Typography noWrap variant='button'>Remover Pet</Typography>}
                                                                 />
                                                             </ListItem>
                                                         </>
-                                                        : null
-                                                    }
-
-                                                    {
-                                                        adoptionDocs ?
-                                                            <ListItem component='a' button key='btn_getDocs' onClick={handleDoc} classes={{ 'button': styles.menuBtns }}>
-                                                                <ListItemIcon><Description fontSize='small' /></ListItemIcon>
-                                                                <ListItemText
-                                                                    primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
-                                                                />
-                                                            </ListItem>
-                                                        : null
+                                                        : 
+                                                            null
                                                     }
 
                                                 </List>
@@ -420,6 +509,45 @@ const UserPetListBoxItemDetails = (props) => {
                                             <Grid item xs={12}>
                                                 <Typography component='p' align='center' style={{ fontWeight: 'bold', color: 'dimgrey' }}>
                                                     {petDetails.animal.dono_antigo.primeiro_nome} {petDetails.animal.dono_antigo.sobrenome}
+                                                </Typography>
+                                            </Grid>
+
+                                        </Grid>
+
+                                        <Divider style={{ margin: '4px 0' }}/>
+                                    </>
+                                    : null
+                                }
+
+                                {
+                                    petAdopter ?
+                                    <>
+                                        <Grid container justify='center' alignItems='center'>
+
+                                            <Grid item xs={12}>
+
+                                                <Typography component='h2' align='center' style={{ fontWeight: 'bold' }}>
+                                                    Adotante
+                                                </Typography>
+
+                                            </Grid>
+
+                                            <Grid item xs={12} style={{ textAlign: 'center' }}>
+                                                <IconButton size='small' onClick={() => { history.push(`/usuario/${petAdopter.cod_usuario}`) }} >
+                                                    <UserAvatar
+                                                        user={petAdopter}
+                                                        width='50px'
+                                                        height='50px'
+                                                        badgesWidth='15px'
+                                                        badgesHeight='15px'
+                                                        showOngBadge
+                                                    />
+                                                </IconButton>
+                                            </Grid>
+
+                                            <Grid item xs={12}>
+                                                <Typography component='p' align='center' style={{ fontWeight: 'bold', color: 'dimgrey' }}>
+                                                    {petAdopter.primeiro_nome} {petAdopter.sobrenome}
                                                 </Typography>
                                             </Grid>
 
@@ -541,7 +669,18 @@ const UserPetListBoxItemDetails = (props) => {
                             </Typography>
                             <DialogActions style={{ maxHeight: '130px' }} >
 
-                                <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%' }}>
+                                <List style={{ overflow: 'auto', maxHeight: '130px', width: '100%', padding: '8px' }}>
+
+                                    {
+                                        adoptionDocs ?
+                                            <ListItem component='a' button key='btn_getDocs' onClick={handleDoc} classes={{ 'button': styles.menuBtns }}>
+                                                <ListItemIcon><Description fontSize='small' /></ListItemIcon>
+                                                <ListItemText
+                                                    primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
+                                                />
+                                            </ListItem>
+                                        : null
+                                    }
 
                                     {
                                         userData.user.cod_usuario !== petDetails.animal.cod_dono ?
@@ -557,39 +696,36 @@ const UserPetListBoxItemDetails = (props) => {
                                     {
                                         userData.user.cod_usuario === petDetails.animal.cod_dono ?
                                         <>
-                                            <ListItem component='button' button key='btn_addAnnouncement' onClick={handleOpenAnnRegDialog} classes={{ 'button': styles.menuBtns }}>
-                                                <ListItemIcon><Public fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Criar anúncio</Typography>}
-                                                />
-                                            </ListItem>
+                                            {
+                                            petDetails.animal.estado_adocao !== 'Adotado' ?
+                                                <>
+                                                    <ListItem component='button' button key='btn_addAnnouncement' onClick={handleOpenAnnRegDialog} classes={{ 'button': styles.menuBtns }}>
+                                                        <ListItemIcon><Public fontSize='small' /></ListItemIcon>
+                                                        <ListItemText
+                                                            primary={<Typography noWrap variant='button'>Criar anúncio</Typography>}
+                                                        />
+                                                    </ListItem>
 
-                                            <ListItem component='button' button disabled key='btn_editPet' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
-                                                <ListItemIcon><Edit fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Editar dados</Typography>}
-                                                />
-                                            </ListItem>
+                                                    <ListItem component='button' button disabled key='btn_editPet' onClick={() => {}} classes={{ 'button': styles.menuBtns }}>
+                                                        <ListItemIcon><Edit fontSize='small' /></ListItemIcon>
+                                                        <ListItemText
+                                                            primary={<Typography noWrap variant='button'>Editar dados</Typography>}
+                                                        />
+                                                    </ListItem>
+                                                </>
+                                            :
+                                                null
+                                            }
 
-                                            <ListItem component='button' button disabled key='btn_rmvPet' onClick={() => { }} classes={{ 'button': styles.menuBtns }}>
+                                            <ListItem component='button' button key='btn_rmvPet' onClick={handleRmvPet} classes={{ 'button': styles.menuBtns }}>
                                                 <ListItemIcon><NotInterested fontSize='small' /></ListItemIcon>
                                                 <ListItemText
                                                     primary={<Typography noWrap variant='button'>Remover Pet</Typography>}
                                                 />
                                             </ListItem>
                                         </>
-                                        : null
-                                    }
-
-                                    {
-                                        adoptionDocs ?
-                                            <ListItem component='a' button key='btn_getDocs' onClick={handleDoc} classes={{ 'button': styles.menuBtns }}>
-                                                <ListItemIcon><Description fontSize='small' /></ListItemIcon>
-                                                <ListItemText
-                                                    primary={<Typography noWrap variant='button'>Ver Documentos</Typography>}
-                                                />
-                                            </ListItem>
-                                        : null
+                                        : 
+                                            null
                                     }
 
                                 </List>
@@ -628,6 +764,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        clearPets: () => { dispatch( clearPets() ) },
         // fetchAnnouncements: (page, limit) => { return dispatch( fetchAnnouncements(page, limit) ) },
         // openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) },
     }

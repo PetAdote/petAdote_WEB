@@ -16,7 +16,7 @@ import { clearUser } from '../redux/actions'
      * });
      */
     const axiosInstance = axios.create({
-        baseURL: 'http://localhost:3000'    // Essa instância, por padrão realizará chamadas na REST API.
+        baseURL: 'http://rest-petadote.ddns.net:3000'    // Essa instância, por padrão realizará chamadas na REST API.
     });
 
     axiosInstance.interceptors.response.use(null, (error) => {
@@ -28,7 +28,7 @@ import { clearUser } from '../redux/actions'
         if (code === 'EXPIRED_USER_AUTH' || code === 'AUTH_HEADER_NOT_SENT'){
 
             return axiosInstance.get('/auth/refresh', {
-                baseURL: 'http://localhost:4000',           // Domínio do Back-end da aplicação.
+                baseURL: 'http://web-petadote.ddns.net:4000',           // Domínio do Back-end da aplicação.
                 withCredentials: true   // Envia os cookies httpOnly contendo o refreshToken do usuário.
             })
             .then((response) => {

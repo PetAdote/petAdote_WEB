@@ -723,9 +723,9 @@ const UserRegistration = (props) => {
 
     });
 
-    useEffect(() => {
-        console.log(errorData);
-    }, [errorData]);
+    // useEffect(() => {
+    //     console.log(errorData);
+    // }, [errorData]);
 
     // Configs do Stepper Component.
     const getSteps = () => {
@@ -914,7 +914,7 @@ const UserRegistration = (props) => {
                 numero: newUserData.numero,
                 complemento: newUserData.complemento
             }, {
-                baseURL: 'http://localhost:4000'
+                baseURL: 'http://web-petadote.ddns.net:4000'
             })
             .then((response) => {
 
@@ -926,7 +926,7 @@ const UserRegistration = (props) => {
                         email: newUserData.email,
                         password: newUserData.password
                     }, {
-                        baseURL: 'http://localhost:4000',   // Domínio do Back-end da aplicação.
+                        baseURL: 'http://web-petadote.ddns.net:4000',   // Domínio do Back-end da aplicação.
                         withCredentials: true
                     })
                     .then( async (response) => {

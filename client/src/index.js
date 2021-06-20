@@ -18,7 +18,7 @@
     console.log('Index 01:', axios.defaults.headers);
 
 axios.get('/auth/refresh', {
-    baseURL: 'http://localhost:4000',   // Domínio do Back-end da aplicação.
+    baseURL: 'http://web-petadote.ddns.net:4000',   // Domínio do Back-end da aplicação.
     withCredentials: true
 })
 .then((response) => {

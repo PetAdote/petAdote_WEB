@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import axios from '../helpers/axiosInstance';
 
 // Actions.
-import { clearPets }
+import { fetchPets, clearPets }
     from '../redux/actions';
 
 // Components.
@@ -79,7 +79,8 @@ const UserProfileContainer = (props) => {
     const { id: profileOwnerId } = useParams();
     
     const { user } = props.userData;
-    const { clearPets } = props;
+    const { pets } = props.petsData;
+    const { clearPets, fetchPets } = props;
 
     const [isLoading, setIsLoading] = useState(true);
     const [profileOwnerData, setProfileOwnerData] = useState(null);
@@ -154,6 +155,11 @@ const UserProfileContainer = (props) => {
 
         if (petRegistrationDialogDecision === 'NEW_PET_ADDED'){
             clearPets();    // Se um novo pet foi adicionado, renove a lista de pets do usuário.
+            fetchPets({
+                ownerId: profileOwnerId,
+                page: 1,
+                limit: 10
+            });
             setPetRegistrationDialogDecision(null);
         }
 
@@ -161,7 +167,7 @@ const UserProfileContainer = (props) => {
             clearPets();
         }
 
-    }, [profileOwnerId, clearPets, petRegistrationDialogDecision]);
+    }, [profileOwnerId, clearPets, petRegistrationDialogDecision, fetchPets]);
 
     const handleContentTabChange = (ev, newValue) => {
         setTabValue(newValue)
@@ -227,6 +233,18 @@ const UserProfileContainer = (props) => {
 
     const handleClosePetRegistrationDialog = (newDecision) => {
         setOpenPetRegistrationDialog(false);
+
+        // if (newDecision === 'NEW_PET_ADDED'){
+
+        //     if (!pets) {
+        //         fetchPets({
+        //             ownerId: profileOwnerId,
+        //             page: 1,
+        //             limit: 10
+        //         });
+        //     }
+
+        // }
 
         if (newDecision) {
             setPetRegistrationDialogDecision(newDecision);
@@ -295,31 +313,35 @@ const UserProfileContainer = (props) => {
                                         </IconButton>
                                     </Grid>
 
-                                    <Grid item>
-                                        <IconButton
-                                            aria-controls="add-content-menu"
-                                            aria-haspopup="true"
-                                            onClick={handleOpenAddContentMenu}
-                                        >
-                                            <Add />
-                                        </IconButton>
-                                        <Menu
-                                            id="add-content-menu"
-                                            anchorEl={anchorAddContentMenu}
-                                            open={Boolean(anchorAddContentMenu)}
-                                            onClose={ () => { handleCloseAddContentMenu() } }
-                                            keepMounted
-                                        >
-                                            <MenuItem 
-                                                onClick={() => { handleCloseAddContentMenu('ADD_NEW_PET') }}
-                                            >
-                                                Novo animal
-                                            </MenuItem>
-                                            <MenuItem disabled>Novo anúncio</MenuItem>
-                                            <MenuItem disabled>Nova postagem</MenuItem>
-                                            <MenuItem disabled>Novo momento</MenuItem>
-                                        </Menu>
-                                    </Grid>
+                                    {
+                                        String(user.cod_usuario) === profileOwnerId ?
+                                            <Grid item>
+                                                <IconButton
+                                                    aria-controls="add-content-menu"
+                                                    aria-haspopup="true"
+                                                    onClick={handleOpenAddContentMenu}
+                                                >
+                                                    <Add />
+                                                </IconButton>
+                                                <Menu
+                                                    id="add-content-menu"
+                                                    anchorEl={anchorAddContentMenu}
+                                                    open={Boolean(anchorAddContentMenu)}
+                                                    onClose={ () => { handleCloseAddContentMenu() } }
+                                                    keepMounted
+                                                >
+                                                    <MenuItem 
+                                                        onClick={() => { handleCloseAddContentMenu('ADD_NEW_PET') }}
+                                                    >
+                                                        Novo animal
+                                                    </MenuItem>
+                                                    <MenuItem disabled>Novo anúncio</MenuItem>
+                                                    <MenuItem disabled>Nova postagem</MenuItem>
+                                                    <MenuItem disabled>Novo momento</MenuItem>
+                                                </Menu>
+                                            </Grid>
+                                        : null
+                                    }
 
                                     <Grid item>
                                         <IconButton
@@ -445,13 +467,15 @@ const UserProfileContainer = (props) => {
 // Redux Store Mapping.
 const mapStateToProps = (state) => {
     return {
-        userData: state.user
+        userData: state.user,
+        petsData: state.pets
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        clearPets: () => { dispatch( clearPets() ) }
+        clearPets: () => { dispatch( clearPets() ) },
+        fetchPets: (configs) => { dispatch( fetchPets(configs) ) },
         // openSnackbar: (message, severity) => { return dispatch( openSnackbar(message, severity) ) }
     }
 }

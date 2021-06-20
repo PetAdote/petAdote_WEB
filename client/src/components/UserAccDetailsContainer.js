@@ -319,7 +319,8 @@ const UserAccDetails = (props) => {
             .then((response) => {
                 if (response.data){
                     console.log(response.data);
-                    
+
+                    setUserAddressData(newUserAddressData);
                     setNewUserAddressData(initialNewAddressData);
                     setHasUpdated(true);
                 }
@@ -713,18 +714,24 @@ const UserAccDetails = (props) => {
                                 <span style={newUserAddressData.cep ? newUserAddressData.cep.length > 0 && newUserAddressData.cep.length < 4 ? { color: 'red' } : { color: 'royalblue' } : {}}>
                                     {
                                         newUserAddressData.cep ?
-                                            String().concat(
-                                                newUserAddressData.cep.substring(0, newUserAddressData.cep.length - 3)
-                                                + (newUserAddressData.cep.length > 0 && newUserAddressData.cep.length < 4 ? '' : '-') +
-                                                newUserAddressData.cep.substring(newUserAddressData.cep.length - 3)
-                                            ) 
+                                            newUserAddressData.cep.includes('-') ?
+                                                newUserAddressData.cep
+                                            :
+                                                String().concat(
+                                                    newUserAddressData.cep.substring(0, newUserAddressData.cep.length - 3)
+                                                    + (newUserAddressData.cep.length > 0 && newUserAddressData.cep.length < 4 ? '' : '-') +
+                                                    newUserAddressData.cep.substring(newUserAddressData.cep.length - 3)
+                                                ) 
                                         : 
                                             userAddressData.cep ?
-                                                String().concat(
-                                                    userAddressData.cep.substring(0, userAddressData.cep.length - 3) 
-                                                    + '-' +
-                                                    userAddressData.cep.substring(userAddressData.cep.length - 3)
-                                                )
+                                                userAddressData.cep.includes('-') ?
+                                                    userAddressData.cep
+                                                :
+                                                    String().concat(
+                                                        userAddressData.cep.substring(0, userAddressData.cep.length - 3) 
+                                                        + '-' +
+                                                        userAddressData.cep.substring(userAddressData.cep.length - 3)
+                                                    )
                                         : null
                                     }
                                 </span>
